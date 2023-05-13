@@ -18,12 +18,12 @@ public class CreditorService {
     }
 
     public void addCreditor(CreditorRequest request){
-            Creditor creditor = Creditor.builder()
-                    .name(request.getName())
-                    .description(request.getDescription())
-                    .image(request.getImage())
-                    .build();
+        Creditor creditor = Creditor.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .image(request.getImage())
+                .build();
 
-            creditorRepo.save(creditor);
+        creditorRepo.save(creditor);
     }
 }

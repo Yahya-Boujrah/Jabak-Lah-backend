@@ -23,6 +23,7 @@ public class Creditor {
     private String image;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private CreditorType type;
     @PrePersist
     public void setCreationDateTime() {
         this.createdAt = LocalDateTime.now();

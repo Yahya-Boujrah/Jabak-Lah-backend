@@ -21,9 +21,11 @@ public class Debt {
     private String name;
     private String description;
 
+    private DebtType type;
     private Boolean paid = false;
     private BigDecimal amount;
     private LocalDateTime createdAt;
+
     @PrePersist
     public void setCreationDateTime() {
         this.createdAt = LocalDateTime.now();
@@ -37,7 +39,7 @@ public class Debt {
     private Creditor creditor;
 
     @ManyToOne
-    @JoinColumn(name = "article_id" , nullable = false)
+    @JoinColumn(name = "article_id" )
     private Article article;
 
     @ManyToOne

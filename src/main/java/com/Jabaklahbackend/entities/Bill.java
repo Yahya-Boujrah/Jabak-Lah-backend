@@ -19,29 +19,20 @@ public class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private BigDecimal totalAmount;
-    private Boolean paid = false;
+    private BigDecimal totalAmount = new BigDecimal(0);
+    private Boolean paid = Boolean.FALSE;
     private String verificationCode;
     private LocalDateTime createdAt;
-
-    @OneToOne
-    @JoinColumn(name = "creditor_id", referencedColumnName = "id")
-    private Creditor creditor;
 
     @OneToOne
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
-    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Debt> debts;
     @PrePersist
     public void setCreationDateTime() {
         this.createdAt = LocalDateTime.now();
     }
-
-
-
-
 
 }

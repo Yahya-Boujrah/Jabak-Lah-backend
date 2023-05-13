@@ -19,14 +19,8 @@ public class Article {
     private Long id;
 
     private String name;
-//    private String description;
-//    private Boolean paid = false;
-//    private BigDecimal amount;
-//    private LocalDateTime createdAt;
-//    @PrePersist
-//    public void setCreationDateTime() {
-//        this.createdAt = LocalDateTime.now();
-//    }
+
+    private ArticleType type;
 
     @OneToOne
     @JoinColumn(name = "client_id", referencedColumnName = "id")

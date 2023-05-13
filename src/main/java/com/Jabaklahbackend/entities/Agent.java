@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Data
@@ -17,4 +18,5 @@ public class Agent extends User{
     private String cin;
     private String patentNumber;
     private String immatricule;
+
 }
