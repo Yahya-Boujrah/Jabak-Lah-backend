@@ -22,6 +22,7 @@ public class Debt {
     private String description;
 
     private DebtType type;
+    @Column(columnDefinition = "tinyint(1) default 0")
     private Boolean paid = false;
     private BigDecimal amount;
     private LocalDateTime createdAt;

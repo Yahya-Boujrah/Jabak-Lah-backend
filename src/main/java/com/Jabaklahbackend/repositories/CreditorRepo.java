@@ -15,8 +15,8 @@ import java.util.Optional;
 public interface CreditorRepo extends JpaRepository {
     public Optional<Creditor> findByName(String name);
 
-    @Query(value = "SELECT c FROM Creditor c WHERE c.type != 'CHARITY'")
-    List<Creditor> findFilteredCreditors();
+//    @Query(value = "SELECT c FROM Creditor c WHERE c.type != 'CHARITY'")
+//    List<Creditor> findFilteredCreditors();
 
 
 }

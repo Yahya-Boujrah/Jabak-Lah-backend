@@ -60,13 +60,15 @@ public class DebtService {
         System.out.println(phone);
         Client client = clientRepo.findByPhone(phone).orElseThrow();
 
-//        List<Creditor> creditors = creditorRepo.findAll()
-//                .stream()
-//                .filter(creditor -> creditor.getType() != CreditorType.CHARITY).collect(Collectors.toList());
+        List<Creditor> creditors = creditorRepo.findAll();
 
-        List<Creditor> creditors = creditorRepo.findFilteredCreditors();
+        List<Creditor> filteredCreditors = creditors.stream()
+                .filter(creditor ->
+                        creditor.getType() != CreditorType.CHARITY
+                ).collect(Collectors.toList());
 
-        List<Article> articles = articleRepo.findFilteredArticles(creditors).stream().filter(article ->
+
+        List<Article> articles = articleRepo.findFilteredArticles(filteredCreditors).stream().filter(article ->
                 article.getType() != ArticleType.ARTICLE_RECHARGE && article.getType() != ArticleType.CHARITY
         ).collect(Collectors.toList());
 

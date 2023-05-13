@@ -23,9 +23,9 @@ public class BillService {
     public static Bill appBill;
 
     public Bill createBill(){
-//        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        System.out.println(phone);
-        Client client = clientRepo.findByPhone("0629974866").orElseThrow();
+        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(phone);
+        Client client = clientRepo.findByPhone(phone).orElseThrow();
 
         appBill = billRepo.save(
                 Bill.builder()

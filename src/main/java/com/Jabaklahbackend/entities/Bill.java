@@ -20,6 +20,7 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private BigDecimal totalAmount = new BigDecimal(0);
+    @Column(columnDefinition = "tinyint(1) default 0")
     private Boolean paid = Boolean.FALSE;
     private String verificationCode;
     private LocalDateTime createdAt;
