@@ -3,155 +3,140 @@ package com.Jabaklahbackend.controllers;
 
 
 import com.Jabaklahbackend.entities.Agent;
-import com.Jabaklahbackend.entities.Client;
+import com.Jabaklahbackend.payloads.ClientRequest;
 import com.Jabaklahbackend.payloads.Response;
-import com.Jabaklahbackend.repositories.AgentRepo;
-import com.Jabaklahbackend.repositories.ClientRepo;
-import exeption.ResourveNotFound;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.Jabaklahbackend.services.AdminService;
+import com.Jabaklahbackend.services.AgentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/api/admin")
-
 @RestController
+@RequiredArgsConstructor
 public class AdminController {
-    @Autowired
-    private AgentRepo agentRepository;
-    @Autowired
-    private ClientRepo clientRepository;
 
-    @GetMapping("/findAllAgents")
-    public List<Agent> findAllAgents(){
-        return agentRepository.findAll();
+    private final AdminService adminService;
+    private final AgentService agentService;
 
+    @GetMapping("/agents")
+    public ResponseEntity<Response> findAllAgents(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("agents", adminService.findAllAgents()))
+                        .message("list of all agents")
+                        .build()
+        );
     }
     @PostMapping("/saveAgent")
-    public ResponseEntity<?> saveAgent(@Validated @RequestBody Agent agent){
-        Agent savedAgent = agentRepository.save(agent);
-
+    public ResponseEntity<Response> saveAgent(@Validated @RequestBody Agent agent){
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.CREATED.value())
                         .status(HttpStatus.CREATED)
-                        .data(Map.of("agent", savedAgent))
+                        .data(Map.of("agent", adminService.saveAgent(agent)))
                         .message("Agent created")
                         .build()
         );
     }
 
-    @GetMapping("/getAgentById/{id}")
-    public ResponseEntity <Agent> getAgentById( @PathVariable long id){
-        Agent agent =agentRepository.findById(id).orElseThrow(()->new ResourveNotFound("Agent dosnt exist  with id :"+id));
-        return ResponseEntity.ok(agent);
+    @GetMapping("/agent/{id}")
+    public ResponseEntity <Response> getAgentById( @PathVariable Long id){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("agent", adminService.findAgent(id)))
+                        .message("Agent created")
+                        .build()
+        );
     }
     @PutMapping("/updateAgent/{id}")
-    public ResponseEntity<Agent> updateAgent(@PathVariable Long id, @RequestBody Agent updatedAgent) {
-        Agent agent =agentRepository.findById(id).orElseThrow(()->new ResourveNotFound("Agent dosnt exist  with id :"+id));
-
-        if (agent == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        agent.setFirstName(updatedAgent.getFirstName());
-        agent.setLastName(updatedAgent.getLastName());
-        agent.setBirthDate(updatedAgent.getBirthDate());
-        agent.setRole(updatedAgent.getRole());
-        agent.setUsername(updatedAgent.getUsername());
-        agent.setPassword(updatedAgent.getPassword());
-
-        agent.setAddress(updatedAgent.getAddress());
-        agent.setEmail(updatedAgent.getEmail());
-        agent.setPhone(updatedAgent.getPhone());
-        agent.setCin(updatedAgent.getCin());
-        agent.setPatentNumber(updatedAgent.getPatentNumber());
-        agent.setImmatricule(updatedAgent.getImmatricule());
-
-        agentRepository.save(agent);
-        return  ResponseEntity.ok(agent);
+    public ResponseEntity<Response> updateAgent(@PathVariable Long id, @RequestBody Agent updatedAgent) {
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("agent", adminService.updateAgent(id, updatedAgent)))
+                        .message("Agent updated")
+                        .build()
+        );
     }
     @DeleteMapping("/deletAgent/{id}")
     public ResponseEntity<Response> deleteAgent(@PathVariable long id) {
-        Agent agent = agentRepository.findById(id).orElseThrow(() -> new ResourveNotFound("Agent doesn't exist with id: " + id));
-        agentRepository.delete(agent);
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("deleted", adminService.deleteAgent(id)))
+                        .message("Agent deleted")
+                        .build()
+        );
 
-        Response response = Response.builder()
-                .statusCode(HttpStatus.OK.value())
-                .status(HttpStatus.OK)
-                .message("Agent deleted successfully")
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .header("Deleted", "true")
-                .body(response);
-    }
-
-
-    @GetMapping("/findAllClients")
-    public List<Client> findAllClients() {
-        return clientRepository.findAll();
     }
 
     @PostMapping("/saveClient")
-    public ResponseEntity<?> saveClient(@Validated @RequestBody Client client) {
-        clientRepository.save(client);
-
-        Response response = Response.builder()
-                .statusCode(HttpStatus.OK.value())
-                .status(HttpStatus.OK)
-                .message("Client saved successfully")
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .header("isClientSaved", "true")
-                .body(response);
+    public ResponseEntity<Response> createClient(@RequestBody ClientRequest client){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .status(HttpStatus.CREATED)
+                        .data(Map.of("client",agentService.saveClient(client)))
+                        .message("Client created")
+                        .build()
+        );
+    }
+    @GetMapping("/clients")
+    public ResponseEntity<Response> getAllClients(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("clients", agentService.getListClient()))
+                        .message("list of all clients")
+                        .build()
+        );
     }
 
-
-
-    @GetMapping("/getClientById/{id}")
-    public ResponseEntity<Client> getClientById(@PathVariable Long id) {
-        Client client =clientRepository.findById(id).orElseThrow(()->new ResourveNotFound("Agent dosnt exist  with id :"+id));
-        return ResponseEntity.ok(client);
+    @GetMapping("/client/{phone}")
+    public ResponseEntity<Response> getClient(@PathVariable String phone){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("client", agentService.getClientByPhone(phone)))
+                        .message("get client by phone")
+                        .build()
+        );
     }
 
     @PutMapping("/updateClient/{id}")
-    public ResponseEntity<Client> updateClient(@PathVariable Long id, @RequestBody Client updatedClient) {
-        Client client =clientRepository.findById(id).orElseThrow(()->new ResourveNotFound("Agent dosnt exist  with id :"+id));
-
-        client.setFirstName(updatedClient.getFirstName());
-        client.setLastName(updatedClient.getLastName());
-        client.setBirthDate(updatedClient.getBirthDate());
-        client.setAddress(updatedClient.getAddress());
-        client.setEmail(updatedClient.getEmail());
-        client.setPhone(updatedClient.getPhone());
-        client.setCin(updatedClient.getCin());
-
-        clientRepository.save(client);
-        return ResponseEntity.ok(client);
+    public ResponseEntity<Response> updateClient(@RequestBody ClientRequest client, @PathVariable Long id){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("client", agentService.updateClient(client, id)))
+                        .message("client updated")
+                        .build()
+        );
     }
-
     @DeleteMapping("/deleteClient/{id}")
-    public ResponseEntity<Response> deleteClient(@PathVariable Long id) {
-        Client client = clientRepository.findById(id).orElseThrow(() -> new ResourveNotFound("Agent doesn't exist with id: " + id));
-        clientRepository.delete(client);
-
-        Response response = Response.builder()
-                .statusCode(HttpStatus.OK.value())
-                .status(HttpStatus.OK)
-                .message("Client deleted successfully")
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .body(response);
+    public ResponseEntity<Response> deleteClient(@PathVariable Long id){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("deleted", agentService.deleteClient(id)))
+                        .message("client deleted")
+                        .build()
+        );
     }
 
 }

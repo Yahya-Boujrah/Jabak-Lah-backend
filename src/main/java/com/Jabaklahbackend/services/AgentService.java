@@ -45,7 +45,7 @@ public class AgentService {
     }
 
     public Client updateClient(ClientRequest updatedClient, Long id){
-        Client client = clientRepo.findById(id).get();
+        Client client = clientRepo.findById(id).orElseThrow();
 
         client.setFirstName(updatedClient.getFirstName());
         client.setLastName(updatedClient.getLastName());
