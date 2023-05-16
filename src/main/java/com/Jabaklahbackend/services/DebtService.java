@@ -4,6 +4,7 @@ package com.Jabaklahbackend.services;
 import com.Jabaklahbackend.entities.*;
 import com.Jabaklahbackend.repositories.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -21,25 +22,20 @@ import static com.Jabaklahbackend.services.BillService.appBill;
 public class DebtService {
 
     private final ClientRepo clientRepo;
-
     private final CreditorRepo creditorRepo;
-
     private final ArticleRepo articleRepo;
-
     private final DebtRepo debtRepo;
-
-
     private final BillRepo billRepo;
-
 
     public List<Debt> listDebts(Long id){
         return debtRepo.findByArticle(articleRepo.findById(id).orElseThrow()).orElseThrow();
     }
 
     public Debt createDebt(Debt debt){
-        return debtRepo.save(debt);
+        Debt newDebt = debtRepo.save(debt);
+        bindToBill(debt.getId());
+        return newDebt;
     }
-
 
     public Debt bindToBill(Long id){
 
@@ -47,18 +43,20 @@ public class DebtService {
 
         debt.setBill(appBill);
 
-        return debtRepo.save(debt);
+        appBill.setTotalAmount(appBill.getTotalAmount().add(debt.getAmount()));
 
+        billRepo.save(appBill);
+        return debtRepo.save(debt);
     }
 
-
+    @Async
     public List<Debt> generateDueDebts() {
 
         List<Debt> debts = new ArrayList<>();
 
-        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(phone);
-        Client client = clientRepo.findByPhone(phone).orElseThrow();
+//        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        System.out.println(phone);
+        Client client = clientRepo.findByPhone("0616061968").orElseThrow();
 
         List<Creditor> creditors = creditorRepo.findAll();
 
@@ -72,7 +70,6 @@ public class DebtService {
                 article.getType() != ArticleType.ARTICLE_RECHARGE && article.getType() != ArticleType.CHARITY
         ).collect(Collectors.toList());
 
-
         for (Article article : articles){
             int decider = new Random().nextInt(350);
             if (decider > 50 && decider <= 250){
@@ -84,6 +81,7 @@ public class DebtService {
                         .amount(new BigDecimal(decider))
                         .name(article.getName())
                         .description("This is a debt for " + article.getName())
+                        .paid(Boolean.FALSE)
                         .build();
                 debts.add(debt);
             }
@@ -96,6 +94,7 @@ public class DebtService {
                         .amount(new BigDecimal(decider - 50))
                         .name(article.getName())
                         .description("This is a debt for " + article.getName())
+                        .paid(Boolean.FALSE)
                         .build();
 
                 Debt penalty = Debt.builder()
@@ -106,6 +105,7 @@ public class DebtService {
                         .amount(new BigDecimal(decider - 220))
                         .name(article.getName())
                         .description("This is a penalty for " + article.getName())
+                        .paid(Boolean.FALSE)
                         .build();
 
                 debts.addAll(Arrays.asList(debt, penalty));

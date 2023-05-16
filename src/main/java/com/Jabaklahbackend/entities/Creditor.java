@@ -21,6 +21,7 @@ public class Creditor {
     private String image;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    @Enumerated(EnumType.STRING)
     private CreditorType type;
     @PrePersist
     public void setCreationDateTime() {

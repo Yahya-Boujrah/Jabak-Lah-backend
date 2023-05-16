@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthenticationController {
 
-
     @Autowired
     AuthenticationService service;
 
@@ -23,7 +22,6 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AdminAuthRequest request
     ) {
-//        System.out.println("authenticate method");
         return ResponseEntity.ok(service.authenticate(request));
     }
 }

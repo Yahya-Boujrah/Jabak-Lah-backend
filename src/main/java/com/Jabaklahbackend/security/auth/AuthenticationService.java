@@ -5,10 +5,12 @@ import com.Jabaklahbackend.payloads.AdminAuthRequest;
 import com.Jabaklahbackend.payloads.AuthenticationResponse;
 import com.Jabaklahbackend.repositories.AdminRepo;
 import com.Jabaklahbackend.repositories.AgentRepo;
+import com.Jabaklahbackend.repositories.ClientRepo;
 import com.Jabaklahbackend.security.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,9 @@ public class AuthenticationService {
     AgentRepo agentRepo;
 
     @Autowired
+    ClientRepo clientRepo;
+
+    @Autowired
     JwtService jwtService;
 
     @Autowired
@@ -37,7 +42,23 @@ public class AuthenticationService {
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
-        User user = agentRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();
+        User user = new User();
+
+        switch (request.getUsername().split(":")[1]){
+            case "ADMIN" :
+                user = adminRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();
+                break;
+            case "AGENT" :
+                System.out.println(request.getUsername().split(":")[0]);
+                user = agentRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();
+                break;
+            case "CLIENT" :
+                user = clientRepo.findByPhone(request.getUsername().split(":")[0]).orElseThrow();
+                break;
+            default:
+                throw new UsernameNotFoundException("User not found");
+        }
+
 
         String jwtToken = jwtService.generateToken(user);
 
@@ -46,4 +67,5 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .build();
     }
+
 }

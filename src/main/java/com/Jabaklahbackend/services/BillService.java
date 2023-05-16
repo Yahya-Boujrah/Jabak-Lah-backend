@@ -1,8 +1,6 @@
 package com.Jabaklahbackend.services;
 
-import com.Jabaklahbackend.entities.Bill;
-import com.Jabaklahbackend.entities.Client;
-import com.Jabaklahbackend.entities.Debt;
+import com.Jabaklahbackend.entities.*;
 import com.Jabaklahbackend.repositories.BillRepo;
 import com.Jabaklahbackend.repositories.ClientRepo;
 import com.Jabaklahbackend.repositories.DebtRepo;
@@ -10,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +23,15 @@ public class BillService {
     public static Bill appBill;
 
     public Bill createBill(){
-        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(phone);
-        Client client = clientRepo.findByPhone(phone).orElseThrow();
+//        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        System.out.println(phone);
+        Client client = clientRepo.findByPhone("0616061968").orElseThrow();
 
         appBill = billRepo.save(
                 Bill.builder()
                         .client(client)
+                        .paid(Boolean.FALSE)
+                        .totalAmount(BigDecimal.ZERO)
                         .build()
         );
 
@@ -43,11 +45,32 @@ public class BillService {
         return debts;
     }
     public List<Bill> getBillsHistory(){
-        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(phone);
-        Client client = clientRepo.findByPhone(phone).orElseThrow();
+        //String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Client client = clientRepo.findByPhone("0616061968").orElseThrow();
 
         List<Bill> bills = billRepo.findByClient(client).orElseThrow();
+
+        bills = bills.stream().filter(bill ->
+                bill.getPaid() != Boolean.FALSE).collect(Collectors.toList());
         return bills;
     }
+
+    public String deleteBill(Long id){
+        Bill bill = billRepo.findById(id).orElseThrow();
+
+        if(bill.getPaid() == Boolean.TRUE){
+            return null;
+        }
+        List<Debt> debts = debtRepo.findAll().stream().filter(debt ->
+                debt.getPaid() != Boolean.TRUE
+            ).collect(Collectors.toList());
+
+
+        debtRepo.deleteAll(debts);
+        billRepo.delete(bill);
+
+        return "Bill deleted ";
+    }
+
+
 }

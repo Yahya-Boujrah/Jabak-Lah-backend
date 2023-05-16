@@ -1,5 +1,6 @@
 package com.Jabaklahbackend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,19 +18,13 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
+    @Enumerated(EnumType.STRING)
     private ArticleType type;
-
-    @OneToOne
-    @JoinColumn(name = "client_id", referencedColumnName = "id")
-    private Client client;
-
     @OneToOne
     @JoinColumn(name = "creditor_id", referencedColumnName = "id")
     private Creditor creditor;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
     private List<Debt> debts;
 }

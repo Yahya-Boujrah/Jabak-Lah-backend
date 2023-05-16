@@ -24,7 +24,6 @@ public class User implements UserDetails {
     private String username;
     @Column(nullable = false)
     private String password;
-
     @Column(columnDefinition = "tinyint(1) default 0")
     private boolean isPasswordChanged = Boolean.FALSE;
     private LocalDateTime createdAt;
@@ -33,7 +32,6 @@ public class User implements UserDetails {
     public void setCreationDateTime() {
         this.createdAt = LocalDateTime.now();
     }
-
     @PreUpdate
     public void setChangeDateTime() {
         this.updatedAt = LocalDateTime.now();

@@ -29,9 +29,9 @@ public class ClientController {
 
     private final BillService billService;
 
-
     @GetMapping("/creditors")
     public ResponseEntity<Response> getCreditors(){
+        System.out.println("inside controller");
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
@@ -72,7 +72,7 @@ public class ClientController {
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
                         .message("Debts Retrieved for " + id)
-                        .data(Map.of("Debts", debtService.listDebts(id)))
+                        .data(Map.of("debts", debtService.listDebts(id)))
                         .build()
         );
     }
@@ -84,11 +84,10 @@ public class ClientController {
                         .statusCode(HttpStatus.CREATED.value())
                         .status(HttpStatus.CREATED)
                         .message("Debt saved ")
-                        .data(Map.of("Debt", debtService.createDebt(debt)))
+                        .data(Map.of("debt", debtService.createDebt(debt)))
                         .build()
         );
     }
-
     @PostMapping("/bill/generate")
     public ResponseEntity<Response> generateBill(){
         return ResponseEntity.ok(
@@ -96,23 +95,53 @@ public class ClientController {
                         .statusCode(HttpStatus.CREATED.value())
                         .status(HttpStatus.CREATED)
                         .message("First Bill Created ")
-                        .data(Map.of("Bill", billService.createBill()))
+                        .data(Map.of("bill", billService.createBill()))
                         .build()
         );
     }
-
-    @PutMapping("/bind/{id}")
-    public ResponseEntity<Response> bindDebtToBill(@PathVariable Long id){
+    @PutMapping("/bind/{debtId}")
+    public ResponseEntity<Response> bindDebtToBill(@PathVariable Long debtId){
 
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
                         .message("Debt binded to bill " + appBill.getId())
-                        .data(Map.of("Debt", debtService.bindToBill(id)))
+                        .data(Map.of("debt", debtService.bindToBill(debtId)))
                         .build()
         );
-
+    }
+    @GetMapping("/bill/debts")
+    public  ResponseEntity<Response> findBillDebts(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("Debts of bill retrieved")
+                        .data(Map.of("debts", billService.findBillDebts(appBill.getId())))
+                        .build()
+        );
+    }
+    @GetMapping("/history")
+    public ResponseEntity<Response> getHistory(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("History for user " )
+                        .data(Map.of("bills", billService.getBillsHistory()))
+                        .build()
+        );
+    }
+    @DeleteMapping("/bill/delete")
+    public ResponseEntity<Response> deleteBill(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("Bill deleted "+ billService.deleteBill(appBill.getId()))
+                        .build()
+        );
     }
 
 }

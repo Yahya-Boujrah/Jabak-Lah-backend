@@ -1,5 +1,6 @@
 package com.Jabaklahbackend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,10 +21,10 @@ public class Debt {
     private Long id;
     private String name;
     private String description;
-
+    @Enumerated(EnumType.STRING)
     private DebtType type;
-    @Column(columnDefinition = "tinyint(1) default 0")
-    private Boolean paid = false;
+    @Column(columnDefinition ="tinyint(1) default 0")
+    private Boolean paid = Boolean.FALSE;
     private BigDecimal amount;
     private LocalDateTime createdAt;
 
@@ -38,11 +39,11 @@ public class Debt {
     @OneToOne
     @JoinColumn(name = "creditor_id", referencedColumnName = "id")
     private Creditor creditor;
-
     @ManyToOne
     @JoinColumn(name = "article_id" )
     private Article article;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "bill_id")
     private Bill bill;

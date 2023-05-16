@@ -12,12 +12,8 @@ import java.util.Map;
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response {
-
     protected int statusCode;
-
     protected HttpStatus status;
-
     protected String message;
-
     protected Map<?, ?> data;
 }
