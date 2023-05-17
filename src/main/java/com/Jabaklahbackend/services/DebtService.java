@@ -54,9 +54,9 @@ public class DebtService {
 
         List<Debt> debts = new ArrayList<>();
 
-//        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        System.out.println(phone);
-        Client client = clientRepo.findByPhone("0616061968").orElseThrow();
+        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("phone number  " + phone);
+        Client client = clientRepo.findByPhone(phone).orElseThrow();
 
         List<Creditor> creditors = creditorRepo.findAll();
 

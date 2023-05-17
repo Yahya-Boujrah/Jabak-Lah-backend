@@ -20,7 +20,6 @@ public class AuthenticationService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-
     @Autowired
     AdminRepo adminRepo;
 
@@ -47,9 +46,9 @@ public class AuthenticationService {
         switch (request.getUsername().split(":")[1]){
             case "ADMIN" :
                 user = adminRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();
+                System.out.println(user.getUsername());
                 break;
             case "AGENT" :
-                System.out.println(request.getUsername().split(":")[0]);
                 user = agentRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();
                 break;
             case "CLIENT" :
@@ -58,7 +57,6 @@ public class AuthenticationService {
             default:
                 throw new UsernameNotFoundException("User not found");
         }
-
 
         String jwtToken = jwtService.generateToken(user);
 

@@ -53,13 +53,13 @@ public class AgentController {
         );
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Response> updateClient(@RequestBody ClientRequest client, @PathVariable Long id){
+    @PutMapping("/update")
+    public ResponseEntity<Response> updateClient(@RequestBody Client client){
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .data(Map.of("client", agentService.updateClient(client, id)))
+                        .data(Map.of("client", agentService.updateClient(client)))
                         .message("client updated")
                         .build()
         );

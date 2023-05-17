@@ -3,22 +3,19 @@ package com.Jabaklahbackend.services;
 import com.Jabaklahbackend.entities.Admin;
 import com.Jabaklahbackend.entities.Agent;
 import com.Jabaklahbackend.entities.Client;
+import com.Jabaklahbackend.entities.User;
 import com.Jabaklahbackend.repositories.AdminRepo;
 import com.Jabaklahbackend.repositories.AgentRepo;
 import com.Jabaklahbackend.repositories.ClientRepo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-
-
 @Service
 @RequiredArgsConstructor
 public class MultipleUserDetailsService implements UserDetailsService {
-
 
     private final AgentRepo agentRepo;
 
@@ -29,21 +26,31 @@ public class MultipleUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         String arr[] = username.split(":");
+        User user = new User();
+        String role = arr[1];
 
-        switch (arr[1]){
+        switch (role){
+            case "CLIENT" :
+                System.out.println("client heree");
+                user = clientRepo.findByPhone(arr[0]).orElseThrow( () -> new UsernameNotFoundException("User not found"));
+                user.setUsername(username);
+                break;
+
             case "AGENT" :
-                Agent agent = agentRepo.findByUsername(arr[0]).orElseThrow( () -> new UsernameNotFoundException("User not found"));
-                return agent;
+                System.out.println("agent heree");
+                user = agentRepo.findByUsername(arr[0]).orElseThrow( () -> new UsernameNotFoundException("User not found"));
+                user.setUsername(username);
+                break;
 
             case "ADMIN" :
-                Admin admin = adminRepo.findByUsername(arr[0]).orElseThrow( () -> new UsernameNotFoundException("User not found"));
-                return admin;
+                System.out.println("admin heree");
+                user= adminRepo.findByUsername(arr[0]).orElseThrow( () -> new UsernameNotFoundException("User not found"));
+                user.setUsername(username);
+                break;
 
-            case "CLIENT" :
-                Client client = clientRepo.findByPhone(arr[0]).orElseThrow( () -> new UsernameNotFoundException("User not found"));
-                return client;
             default:
                 throw new UsernameNotFoundException("User not found");
         }
+        return user;
     }
 }

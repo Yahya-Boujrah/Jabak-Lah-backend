@@ -1,5 +1,6 @@
 package com.Jabaklahbackend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,11 +18,16 @@ public class User implements UserDetails {
     private Long id;
     private String firstName;
     private String lastName;
+    private String cin;
+    private String email;
     private Date birthDate;
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
     @Column(nullable = false, unique = true)
     private String username;
+
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
     @Column(columnDefinition = "tinyint(1) default 0")

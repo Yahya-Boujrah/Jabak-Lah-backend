@@ -3,6 +3,7 @@ package com.Jabaklahbackend.controllers;
 
 
 import com.Jabaklahbackend.entities.Agent;
+import com.Jabaklahbackend.entities.Client;
 import com.Jabaklahbackend.payloads.ClientRequest;
 import com.Jabaklahbackend.payloads.Response;
 import com.Jabaklahbackend.services.AdminService;
@@ -22,6 +23,18 @@ public class AdminController {
 
     private final AdminService adminService;
     private final AgentService agentService;
+
+    @GetMapping("/admins")
+    public ResponseEntity<Response> findAllAdmins(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("admins", adminService.findAllAdmins()))
+                        .message("list of all admins")
+                        .build()
+        );
+    }
 
     @GetMapping("/agents")
     public ResponseEntity<Response> findAllAgents(){
@@ -57,13 +70,13 @@ public class AdminController {
                         .build()
         );
     }
-    @PutMapping("/updateAgent/{id}")
-    public ResponseEntity<Response> updateAgent(@PathVariable Long id, @RequestBody Agent updatedAgent) {
+    @PutMapping("/updateAgent")
+    public ResponseEntity<Response> updateAgent(@RequestBody Agent updatedAgent) {
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .data(Map.of("agent", adminService.updateAgent(id, updatedAgent)))
+                        .data(Map.of("agent", adminService.updateAgent(updatedAgent)))
                         .message("Agent updated")
                         .build()
         );
@@ -116,13 +129,13 @@ public class AdminController {
         );
     }
 
-    @PutMapping("/updateClient/{id}")
-    public ResponseEntity<Response> updateClient(@RequestBody ClientRequest client, @PathVariable Long id){
+    @PutMapping("/updateClient")
+    public ResponseEntity<Response> updateClient(@RequestBody Client client){
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .data(Map.of("client", agentService.updateClient(client, id)))
+                        .data(Map.of("client", agentService.updateClient(client)))
                         .message("client updated")
                         .build()
         );

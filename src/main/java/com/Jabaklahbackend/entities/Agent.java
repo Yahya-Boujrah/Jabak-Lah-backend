@@ -12,9 +12,7 @@ import lombok.NoArgsConstructor;
 
 public class Agent extends User{
     private String address;
-    private String email;
     private String phone;
-    private String cin;
     private String patentNumber;
     private String immatricule;
 

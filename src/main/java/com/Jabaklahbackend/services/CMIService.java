@@ -36,7 +36,7 @@ public class CMIService {
             throw new IllegalStateException("cannot charge null amount");
         }
 
-        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 
         Client client = clientRepo.findByPhone(phone).orElseThrow();
         BigDecimal newBalance = client.getBalance().add(amount);
@@ -49,8 +49,8 @@ public class CMIService {
     }
 
     public String payBill1(){
-       // String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Client client = clientRepo.findByPhone("0616061968").orElseThrow();
+        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = clientRepo.findByPhone(phone).orElseThrow();
 
         if(client.getBalance().compareTo( appBill.getTotalAmount() ) == -1)
             throw new IllegalStateException("Client do not have enough balance");
@@ -87,7 +87,7 @@ public class CMIService {
 
     }
 public String payBill(){
-    String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
     Client client = clientRepo.findByPhone(phone).orElseThrow();
 
 
@@ -102,7 +102,7 @@ public String payBill(){
 }
 
     public String confirmBillPayment(String verificationCode){
-        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientRepo.findByPhone(phone).orElseThrow();
 
         if(client.getBalance().compareTo( appBill.getTotalAmount() ) == -1)
