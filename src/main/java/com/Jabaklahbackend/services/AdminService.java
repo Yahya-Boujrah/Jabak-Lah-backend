@@ -6,7 +6,7 @@ import com.Jabaklahbackend.entities.Role;
 import com.Jabaklahbackend.payloads.ChangePasswordRequest;
 import com.Jabaklahbackend.repositories.AdminRepo;
 import com.Jabaklahbackend.repositories.AgentRepo;
-import exeption.ResourceNotFound;
+import exception.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
