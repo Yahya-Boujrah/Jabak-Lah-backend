@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 
 public class Admin extends User {
-    private String phone;
+
 
 }

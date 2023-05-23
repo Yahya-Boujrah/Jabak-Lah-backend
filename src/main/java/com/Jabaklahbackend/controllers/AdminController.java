@@ -4,11 +4,13 @@ package com.Jabaklahbackend.controllers;
 
 import com.Jabaklahbackend.entities.Agent;
 import com.Jabaklahbackend.entities.Client;
+import com.Jabaklahbackend.payloads.ChangePasswordRequest;
 import com.Jabaklahbackend.payloads.ClientRequest;
 import com.Jabaklahbackend.payloads.Response;
 import com.Jabaklahbackend.services.AdminService;
 import com.Jabaklahbackend.services.AgentService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -70,13 +72,13 @@ public class AdminController {
                         .build()
         );
     }
-    @PutMapping("/updateAgent")
-    public ResponseEntity<Response> updateAgent(@RequestBody Agent updatedAgent) {
+    @PutMapping("/updateAgent/{id}")
+    public ResponseEntity<Response> updateAgent(@RequestBody Agent updatedAgent, @PathVariable long id ) {
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .data(Map.of("agent", adminService.updateAgent(updatedAgent)))
+                        .data(Map.of("agent", adminService.updateAgent(updatedAgent, id)))
                         .message("Agent updated")
                         .build()
         );
@@ -129,13 +131,13 @@ public class AdminController {
         );
     }
 
-    @PutMapping("/updateClient")
-    public ResponseEntity<Response> updateClient(@RequestBody Client client){
+    @PutMapping("/updateClient/{id}")
+    public ResponseEntity<Response> updateClient( @PathVariable Long id, @RequestBody Client client){
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .data(Map.of("client", agentService.updateClient(client)))
+                        .data(Map.of("client", agentService.updateClient(client, id)))
                         .message("client updated")
                         .build()
         );
@@ -151,7 +153,18 @@ public class AdminController {
                         .build()
         );
     }
-
+    @SneakyThrows
+    @PutMapping("/changePassword")
+    public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest request){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("changed", adminService.changePassword(request) ))
+                        .message("password changed")
+                        .build()
+        );
+    }
 }
 
 

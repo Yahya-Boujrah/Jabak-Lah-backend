@@ -1,9 +1,6 @@
 package com.Jabaklahbackend.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,11 +14,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@AttributeOverrides({
+        @AttributeOverride(name = "phone", column = @Column(nullable = false,unique = true)),
+})
 public class Client extends User{
-    private String address;
-
-    @Column(nullable = false, unique = true)
-    private String phone;
+//    private String address;
 
     @Enumerated(EnumType.STRING)
     private AccountType accountType;

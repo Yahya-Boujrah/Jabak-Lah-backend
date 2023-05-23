@@ -33,20 +33,24 @@ public class DebtService {
 
     public Debt createDebt(Debt debt){
         Debt newDebt = debtRepo.save(debt);
-        bindToBill(debt.getId());
+        List <Long> debtsIds = new ArrayList<>();
+        debtsIds.add(debt.getId());
+        bindToBill(debtsIds);
         return newDebt;
     }
 
-    public Debt bindToBill(Long id){
+    public List<Debt> bindToBill(List<Long> ids){
 
-        Debt debt = debtRepo.findById(id).orElseThrow();
+        List<Debt> debts = debtRepo.findAllById(ids);
 
-        debt.setBill(appBill);
+        debts.forEach(debt ->{
+            debt.setBill(appBill);
+            appBill.setTotalAmount(appBill.getTotalAmount().add(debt.getAmount()));
 
-        appBill.setTotalAmount(appBill.getTotalAmount().add(debt.getAmount()));
+        });
 
         billRepo.save(appBill);
-        return debtRepo.save(debt);
+        return debtRepo.saveAll(debts);
     }
 
     @Async
@@ -54,9 +58,9 @@ public class DebtService {
 
         List<Debt> debts = new ArrayList<>();
 
-        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
         System.out.println("phone number  " + phone);
-        Client client = clientRepo.findByPhone(phone).orElseThrow();
+        Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
 
         List<Creditor> creditors = creditorRepo.findAll();
 
@@ -102,7 +106,7 @@ public class DebtService {
                         .creditor(article.getCreditor())
                         .type(DebtType.PENALTY)
                         .article(article)
-                        .amount(new BigDecimal(decider - 220))
+                        .amount(new BigDecimal(decider - 250))
                         .name(article.getName())
                         .description("This is a penalty for " + article.getName())
                         .paid(Boolean.FALSE)

@@ -23,9 +23,9 @@ public class BillService {
     public static Bill appBill;
 
     public Bill createBill(){
-        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println(phone);
-        Client client = clientRepo.findByPhone(phone).orElseThrow();
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
 
         appBill = billRepo.save(
                 Bill.builder()
@@ -46,7 +46,7 @@ public class BillService {
     }
     public List<Bill> getBillsHistory(){
         String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepo.findByPhone(phone).orElseThrow();
+        Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
 
         List<Bill> bills = billRepo.findByClient(client).orElseThrow();
 

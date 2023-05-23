@@ -1,8 +1,5 @@
 package com.Jabaklahbackend.services;
 
-import com.Jabaklahbackend.entities.Admin;
-import com.Jabaklahbackend.entities.Agent;
-import com.Jabaklahbackend.entities.Client;
 import com.Jabaklahbackend.entities.User;
 import com.Jabaklahbackend.repositories.AdminRepo;
 import com.Jabaklahbackend.repositories.AgentRepo;
@@ -16,15 +13,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MultipleUserDetailsService implements UserDetailsService {
-
     private final AgentRepo agentRepo;
-
     private final AdminRepo adminRepo;
-
     private final ClientRepo clientRepo;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println(username + " load");
         String arr[] = username.split(":");
         User user = new User();
         String role = arr[1];
@@ -33,7 +28,7 @@ public class MultipleUserDetailsService implements UserDetailsService {
             case "CLIENT" :
                 System.out.println("client heree");
                 user = clientRepo.findByPhone(arr[0]).orElseThrow( () -> new UsernameNotFoundException("User not found"));
-                user.setUsername(username);
+                user.setPhone(username);
                 break;
 
             case "AGENT" :

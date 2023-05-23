@@ -34,8 +34,6 @@ public class AuthenticationService {
 
     @Autowired
     AuthenticationManager authenticationManager;
-
-
     public AuthenticationResponse authenticate(AdminAuthRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
@@ -46,7 +44,6 @@ public class AuthenticationService {
         switch (request.getUsername().split(":")[1]){
             case "ADMIN" :
                 user = adminRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();
-                System.out.println(user.getUsername());
                 break;
             case "AGENT" :
                 user = agentRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();

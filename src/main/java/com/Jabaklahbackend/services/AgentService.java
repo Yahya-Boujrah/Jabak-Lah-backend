@@ -5,25 +5,27 @@ import com.Jabaklahbackend.entities.Role;
 import com.Jabaklahbackend.payloads.ClientRequest;
 import com.Jabaklahbackend.repositories.ClientRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AgentService {
+
     private final ClientRepo clientRepo;
 
     public Client saveClient(ClientRequest request){
 
         Client client = Client.builder()
-                .address(request.getAddress())
-                .phone(request.getPhone())
-                .balance(request.getBalance())
+                .balance(BigDecimal.ZERO)
                 .accountType(request.getAccountType())
                 .build();
 
+        client.setPhone(request.getPhone());
         client.setLastName(request.getLastName());
         client.setEmail(request.getEmail());
         client.setCin(request.getCin());
@@ -32,6 +34,7 @@ public class AgentService {
         client.setRole(Role.CLIENT);
         client.setUsername(request.getUsername());
         client.setPassword(request.getPassword());
+        client.setPassword(new BCryptPasswordEncoder().encode("123"));
 
         return clientRepo.save(client);
 
@@ -45,24 +48,20 @@ public class AgentService {
         return clientRepo.findByPhone(phone).orElseThrow();
     }
 
-    public Client updateClient(Client updatedClient){
+    public Client updateClient(Client updatedClient, Long id){
 
-//        Client client = clientRepo.findById(id).orElseThrow();
-//        client.setFirstName(updatedClient.getFirstName());
-//        client.setLastName(updatedClient.getLastName());
-//        client.setBirthDate(updatedClient.getBirthDate());
-//        client.setRole(updatedClient.getRole());
-//        client.setUsername(updatedClient.getUsername());
-//        client.setPassword(updatedClient.getPassword());
-//
-//        client.setAddress(updatedClient.getAddress());
-//        client.setEmail(updatedClient.getEmail());
-//        client.setPhone(updatedClient.getPhone());
-//        client.setCin(updatedClient.getCin());
-//        client.setBalance(updatedClient.getBalance());
-//        client.setAccountType(updatedClient.getAccountType());
+        Client client = clientRepo.findById(id).orElseThrow();
+        client.setFirstName(updatedClient.getFirstName());
+        client.setLastName(updatedClient.getLastName());
+        client.setBirthDate(updatedClient.getBirthDate());
+        client.setUsername(updatedClient.getUsername());
 
-        return clientRepo.save(updatedClient);
+        client.setEmail(updatedClient.getEmail());
+        client.setPhone(updatedClient.getPhone());
+        client.setCin(updatedClient.getCin());
+        client.setAccountType(updatedClient.getAccountType());
+
+        return clientRepo.save(client);
     }
 
     public Boolean deleteClient(Long id){

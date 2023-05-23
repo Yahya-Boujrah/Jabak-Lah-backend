@@ -4,6 +4,7 @@ package com.Jabaklahbackend.controllers;
 import com.Jabaklahbackend.entities.Client;
 import com.Jabaklahbackend.payloads.ClientRequest;
 import com.Jabaklahbackend.payloads.Response;
+import com.Jabaklahbackend.services.AdminService;
 import com.Jabaklahbackend.services.AgentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,19 +14,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/api/agent")
 @RequiredArgsConstructor
 public class AgentController {
     private final AgentService agentService;
+    private final AdminService adminService;
 
-    @PostMapping("/addClient")
-    public ResponseEntity<Response> createClient(@RequestBody ClientRequest client){
+    @GetMapping("/listAgent")
+    public ResponseEntity<Response> getAllAgents(){
         return ResponseEntity.ok(
                 Response.builder()
-                        .statusCode(HttpStatus.CREATED.value())
-                        .status(HttpStatus.CREATED)
-                        .data(Map.of("client",agentService.saveClient(client)))
-                        .message("Client created")
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("agents", adminService.findAllAgents()))
+                        .message("list of all agents")
                         .build()
         );
     }
@@ -40,7 +42,17 @@ public class AgentController {
                         .build()
         );
     }
-
+    @PostMapping("/addClient")
+    public ResponseEntity<Response> createClient(@RequestBody ClientRequest client){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .status(HttpStatus.CREATED)
+                        .data(Map.of("client",agentService.saveClient(client)))
+                        .message("Client created")
+                        .build()
+        );
+    }
     @GetMapping("/client/{phone}")
     public ResponseEntity<Response> getClient(@PathVariable String phone){
         return ResponseEntity.ok(
@@ -53,13 +65,13 @@ public class AgentController {
         );
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Response> updateClient(@RequestBody Client client){
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Response> updateClient(@PathVariable Long id ,@RequestBody Client client){
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .data(Map.of("client", agentService.updateClient(client)))
+                        .data(Map.of("client", agentService.updateClient(client, id)))
                         .message("client updated")
                         .build()
         );

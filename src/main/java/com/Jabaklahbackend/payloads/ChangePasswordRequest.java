@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminAuthRequest {
-    private String username;
-    private String password;
+
+public class ChangePasswordRequest {
+
+    private String oldPassword;
+    private String newPassword;
+
 }

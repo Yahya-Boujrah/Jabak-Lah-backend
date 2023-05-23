@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.Jabaklahbackend.services.BillService.appBill;
@@ -31,7 +32,7 @@ public class ClientController {
 
     @GetMapping("/creditors")
     public ResponseEntity<Response> getCreditors(){
-        System.out.println("inside controller");
+        //System.out.println("inside controller");
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
@@ -78,7 +79,6 @@ public class ClientController {
     }
     @PostMapping("/articles/debts/save")
     public ResponseEntity<Response> saveDebt(@RequestBody Debt debt){
-
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.CREATED.value())
@@ -100,14 +100,14 @@ public class ClientController {
         );
     }
     @PutMapping("/bind/{debtId}")
-    public ResponseEntity<Response> bindDebtToBill(@PathVariable Long debtId){
+    public ResponseEntity<Response> bindDebtToBill(@PathVariable("debtId") List<Long> debtIds){
 
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
                         .message("Debt binded to bill " + appBill.getId())
-                        .data(Map.of("debt", debtService.bindToBill(debtId)))
+                        .data(Map.of("debt", debtService.bindToBill(debtIds)))
                         .build()
         );
     }

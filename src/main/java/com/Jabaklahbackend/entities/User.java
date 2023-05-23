@@ -15,25 +15,25 @@ import java.util.Date;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String firstName;
-    private String lastName;
-    private String cin;
-    private String email;
-    private Date birthDate;
+    protected Long id;
+    protected String firstName;
+    protected String lastName;
+    protected String cin;
+    protected String email;
+    protected Date birthDate;
+    protected String phone;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role;
+    protected Role role;
     @Column(nullable = false, unique = true)
-    private String username;
-
+    protected String username;
     @JsonIgnore
     @Column(nullable = false)
-    private String password;
+    protected String password;
     @Column(columnDefinition = "tinyint(1) default 0")
-    private boolean isPasswordChanged = Boolean.FALSE;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    protected boolean isPasswordChanged = Boolean.FALSE;
+    protected LocalDateTime createdAt;
+    protected LocalDateTime updatedAt;
     @PrePersist
     public void setCreationDateTime() {
         this.createdAt = LocalDateTime.now();
@@ -42,7 +42,6 @@ public class User implements UserDetails {
     public void setChangeDateTime() {
         this.updatedAt = LocalDateTime.now();
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

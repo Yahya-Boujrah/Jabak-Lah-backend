@@ -42,8 +42,6 @@ public class Debt {
     @ManyToOne
     @JoinColumn(name = "article_id" )
     private Article article;
-
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "bill_id")
     private Bill bill;
