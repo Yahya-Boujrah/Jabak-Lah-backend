@@ -33,10 +33,35 @@ public class DebtService {
 
     public Debt createDebt(Debt debt){
         Debt newDebt = debtRepo.save(debt);
-        List <Long> debtsIds = new ArrayList<>();
-        debtsIds.add(debt.getId());
-        bindToBill(debtsIds);
+        bindToBill(debt);
         return newDebt;
+    }
+
+
+    public Debt createDebt(Product product){
+
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
+
+        Debt debt = new Debt();
+        debt.setProduct(product);
+        debt.setName(product.getName());
+        debt.setDescription("debt for product " + product.getName());
+        debt.setClient(client);
+        debt.setAmount(product.getUnitPrice());
+        debt.setType(DebtType.PRODUCT);
+        bindToBill(debt);
+
+        return debtRepo.save(debt);
+    }
+
+
+    public Debt bindToBill(Debt debt){
+        debt.setBill(appBill);
+        appBill.setTotalAmount(appBill.getTotalAmount().add(debt.getAmount()));
+        billRepo.save(appBill);
+        return debtRepo.save(debt);
     }
 
     public List<Debt> bindToBill(List<Long> ids){

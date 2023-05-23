@@ -1,12 +1,11 @@
 package com.Jabaklahbackend.services;
 
-import com.Jabaklahbackend.entities.Bill;
-import com.Jabaklahbackend.entities.Client;
-import com.Jabaklahbackend.entities.Debt;
+import com.Jabaklahbackend.entities.*;
 import com.Jabaklahbackend.payloads.PaymentInfo;
 import com.Jabaklahbackend.repositories.BillRepo;
 import com.Jabaklahbackend.repositories.ClientRepo;
 import com.Jabaklahbackend.repositories.DebtRepo;
+import com.Jabaklahbackend.repositories.OrderRepo;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
@@ -45,6 +44,12 @@ public class CMIService {
     @Autowired
     private SmsService smsService;
 
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private OrderRepo orderRepo;
+
     @Value("${stripe.key.secret}")
     private String secretKey;
 
@@ -66,7 +71,6 @@ public class CMIService {
         return Boolean.TRUE;
 
     }
-
 
     public PaymentIntent createPaymentIntent(PaymentInfo paymentInfo) throws StripeException {
 
@@ -120,6 +124,22 @@ public class CMIService {
                         .build()
         );
 
+         List<Debt> productDebts = mappedDebts.stream().filter(debt -> debt.getType() == DebtType.PRODUCT).collect(Collectors.toList());
+
+         BigDecimal total = new BigDecimal(0);
+
+         for(Debt debt : productDebts){
+             total = total.add(debt.getAmount());
+         }
+
+         Order order = new Order();
+         order.setDebts(productDebts);
+         order.setTotalPrice(total);
+         order.setOrderTrackingNumber(orderService.generateOrderTrackingNumber());
+         order.setClient(client);
+
+         orderRepo.save(order);
+
         return "Balance updated and bill paid";
 
     }
@@ -138,7 +158,7 @@ public String payBill(){
     return "check sms to verify payment";
 }
 
-    public String confirmBillPayment(String verificationCode){
+public String confirmBillPayment(String verificationCode){
         String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
 

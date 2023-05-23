@@ -2,7 +2,7 @@ package com.Jabaklahbackend.controllers;
 
 
 import com.Jabaklahbackend.entities.Debt;
-import com.Jabaklahbackend.entities.OrderItem;
+import com.Jabaklahbackend.entities.Product;
 import com.Jabaklahbackend.payloads.Response;
 import com.Jabaklahbackend.services.*;
 import lombok.RequiredArgsConstructor;
@@ -146,13 +146,14 @@ public class ClientController {
     }
 
 
-    @PostMapping("/placeOrder")
-    public ResponseEntity<Response> placeOrder(@RequestBody List<OrderItem> orderItems){
+    @PostMapping("/addProduct")
+    public ResponseEntity<Response> addOrderToBill(@RequestBody Product product){
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .message(orderService.placeOrder(orderItems))
+                        .message("product added to bill")
+                        .data(Map.of("debt", debtService.createDebt(product)))
                         .build()
         );
     }

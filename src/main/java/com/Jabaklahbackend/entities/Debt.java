@@ -42,7 +42,16 @@ public class Debt {
     @ManyToOne
     @JoinColumn(name = "article_id" )
     private Article article;
+
+    @OneToOne
+    @JoinColumn(name="product_id", referencedColumnName = "id")
+    private Product product;
+
     @ManyToOne
     @JoinColumn(name = "bill_id")
     private Bill bill;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 }
