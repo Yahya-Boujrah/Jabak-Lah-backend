@@ -36,27 +36,12 @@ public class Order {
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Debt> debts;
 
-    @OneToOne
-    @JoinColumn(name = "debt_id", referencedColumnName = "id")
-    private Debt debt;
-
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
-    private Set<OrderItem> orderItems;
-
-
-    public void add(OrderItem item) {
-
-        if (item != null) {
-            if (orderItems == null) {
-                orderItems = new HashSet<>();
-            }
-
-            item.setOrder(this);
-            orderItems.add(item);
-
-        }
+    public void setDebts(List<Debt> debts) {
+        debts.forEach(debt -> debt.setOrder(this));
+        this.debts = debts;
     }
 
 }

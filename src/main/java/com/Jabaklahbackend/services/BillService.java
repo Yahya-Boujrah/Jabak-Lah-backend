@@ -23,7 +23,7 @@ public class BillService {
     public static Bill appBill;
 
     public Bill createBill(){
-        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+       String phone = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
 
