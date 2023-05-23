@@ -10,10 +10,10 @@ import java.util.Random;
 @Service
 public class PasswordGeneratorService {
 
-//    @Value("${password.choices.8}")
+    @Value("${password.choices.8}")
     private String alphaNumeric;
 
-//    @Value("${password.choices.5}")
+    @Value("${password.choices.5}")
     private String numeric;
 
     public String passwordForEmail(){

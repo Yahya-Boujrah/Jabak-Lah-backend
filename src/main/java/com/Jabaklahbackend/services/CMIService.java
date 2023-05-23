@@ -3,32 +3,51 @@ package com.Jabaklahbackend.services;
 import com.Jabaklahbackend.entities.Bill;
 import com.Jabaklahbackend.entities.Client;
 import com.Jabaklahbackend.entities.Debt;
+import com.Jabaklahbackend.payloads.PaymentInfo;
 import com.Jabaklahbackend.repositories.BillRepo;
 import com.Jabaklahbackend.repositories.ClientRepo;
 import com.Jabaklahbackend.repositories.DebtRepo;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.Jabaklahbackend.services.BillService.appBill;
 
-@RequiredArgsConstructor
 @Service
 public class CMIService {
 
-    private final ClientRepo clientRepo;
-    private final BillRepo billRepo;
-    private final DebtRepo debtRepo;
+    @Autowired
+    private ClientRepo clientRepo;
 
-    private final PasswordGeneratorService passwordGenerator;
+    @Autowired
+    private BillRepo billRepo;
 
-    private final SmsService smsService;
+    @Autowired
+    private DebtRepo debtRepo;
+
+    @Autowired
+    private  PasswordGeneratorService passwordGenerator;
+
+    @Autowired
+    private SmsService smsService;
+
+    @Value("${stripe.key.secret}")
+    private String secretKey;
+
 
 
     public boolean chargerSolde(BigDecimal amount){
@@ -46,6 +65,24 @@ public class CMIService {
         clientRepo.save(client);
         return Boolean.TRUE;
 
+    }
+
+
+    public PaymentIntent createPaymentIntent(PaymentInfo paymentInfo) throws StripeException {
+
+        Stripe.apiKey = secretKey;
+
+        List<String> paymentMethodTypes = new ArrayList<>();
+        paymentMethodTypes.add("card");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("amount", paymentInfo.getAmount());
+        params.put("currency", paymentInfo.getCurrency());
+        params.put("payment_method_types", paymentMethodTypes);
+        params.put("description", "JabakLah purchase");
+        params.put("receipt_email", paymentInfo.getReceiptEmail());
+
+        return PaymentIntent.create(params);
     }
 
     public String payBill1(){

@@ -2,11 +2,9 @@ package com.Jabaklahbackend.controllers;
 
 
 import com.Jabaklahbackend.entities.Debt;
+import com.Jabaklahbackend.entities.OrderItem;
 import com.Jabaklahbackend.payloads.Response;
-import com.Jabaklahbackend.services.ArticleService;
-import com.Jabaklahbackend.services.BillService;
-import com.Jabaklahbackend.services.CreditorService;
-import com.Jabaklahbackend.services.DebtService;
+import com.Jabaklahbackend.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +27,9 @@ public class ClientController {
     private final DebtService debtService;
 
     private final BillService billService;
+
+
+    private final OrderService orderService;
 
     @GetMapping("/creditors")
     public ResponseEntity<Response> getCreditors(){
@@ -140,6 +141,18 @@ public class ClientController {
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
                         .message("Bill deleted "+ billService.deleteBill(appBill.getId()))
+                        .build()
+        );
+    }
+
+
+    @PostMapping("/placeOrder")
+    public ResponseEntity<Response> placeOrder(@RequestBody List<OrderItem> orderItems){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message(orderService.placeOrder(orderItems))
                         .build()
         );
     }
