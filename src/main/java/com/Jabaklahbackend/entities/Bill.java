@@ -1,5 +1,6 @@
 package com.Jabaklahbackend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +32,7 @@ public class Bill {
     @OneToOne
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Debt> debts;
     @PrePersist

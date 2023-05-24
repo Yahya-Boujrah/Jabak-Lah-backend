@@ -7,6 +7,7 @@ import com.Jabaklahbackend.repositories.ClientRepo;
 import com.Jabaklahbackend.repositories.ProspectRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,15 +15,19 @@ import org.springframework.stereotype.Service;
 public class ClientService {
     private final ProspectRepo prospectRepo;
     private final ClientRepo clientRepo;
+    private final PasswordEncoder passwordEncoder;
 
     public Prospect saveProspect(ProspectRequest request){
+        System.out.println(request.getType());
         Prospect prospect = Prospect.builder()
                 .lastName(request.getLastName())
                 .firstName(request.getFirstName())
                 .cin(request.getCin())
                 .email(request.getEmail())
-                .address(request.getAddress())
+                .username(request.getUsername())
+                .type(request.getType())
                 .phone(request.getPhone())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
         return prospectRepo.save(prospect);

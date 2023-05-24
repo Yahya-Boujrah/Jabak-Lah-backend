@@ -19,21 +19,17 @@ public class AuthenticationService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
     @Autowired
     AdminRepo adminRepo;
-
     @Autowired
     AgentRepo agentRepo;
-
     @Autowired
     ClientRepo clientRepo;
-
     @Autowired
     JwtService jwtService;
-
     @Autowired
     AuthenticationManager authenticationManager;
+
     public AuthenticationResponse authenticate(AdminAuthRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
