@@ -1,6 +1,7 @@
 package com.Jabaklahbackend.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,10 +33,14 @@ public class Order {
     @UpdateTimestamp
     private Date lastUpdated;
 
+
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
+
+    @JsonIgnore
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Debt> debts;
 
