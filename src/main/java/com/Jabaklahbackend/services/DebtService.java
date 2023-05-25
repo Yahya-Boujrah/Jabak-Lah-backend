@@ -28,7 +28,9 @@ public class DebtService {
     private final BillRepo billRepo;
 
     public List<Debt> listDebts(Long id){
-        return debtRepo.findByArticle(articleRepo.findById(id).orElseThrow()).orElseThrow();
+        return debtRepo.findByArticle(articleRepo.findById(id).orElseThrow()).orElseThrow().stream().filter(debt -> {
+           return debt.getPaid() == Boolean.FALSE;
+        }).collect(Collectors.toList());
     }
 
     public Debt createDebt(Debt debt){

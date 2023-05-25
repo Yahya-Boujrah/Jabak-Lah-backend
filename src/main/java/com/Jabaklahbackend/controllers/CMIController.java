@@ -27,10 +27,6 @@ public class CMIController {
 
     private final CMIService cmiService;
 
-
-
-
-
     @PostMapping("/charger")
     public ResponseEntity<Response> chargerSolde(@RequestBody BigDecimal amount){
         return ResponseEntity.ok(
@@ -47,13 +43,7 @@ public class CMIController {
     @PostMapping("/payment-intent")
     public ResponseEntity<Response> createPaymentIntent(@RequestBody PaymentInfo paymentInfo) throws StripeException {
 
-
         String paymentIntent = cmiService.createPaymentIntent(paymentInfo).toJson();
-
-
-
-
-
 
         return ResponseEntity.ok(
                 Response.builder()

@@ -16,10 +16,7 @@ import java.util.Map;
 @RequestMapping("/api/products")
 public class ProductController {
 
-
     private final ProductService productService;
-
-
 
     @GetMapping("/{id}")
     ResponseEntity<Response> getProductById(@PathVariable Long id){
