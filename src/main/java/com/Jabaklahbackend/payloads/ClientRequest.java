@@ -24,7 +24,6 @@ public class ClientRequest {
     private Role role;
     private String username;
     private Date birthDate;
-    private String password;
     private String address;
     private String email;
     private String phone;

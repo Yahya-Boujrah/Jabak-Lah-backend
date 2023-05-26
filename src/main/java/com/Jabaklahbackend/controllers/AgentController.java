@@ -3,6 +3,7 @@ package com.Jabaklahbackend.controllers;
 
 import com.Jabaklahbackend.entities.Client;
 import com.Jabaklahbackend.payloads.ClientRequest;
+import com.Jabaklahbackend.payloads.ProspectRequest;
 import com.Jabaklahbackend.payloads.Response;
 import com.Jabaklahbackend.services.AdminService;
 import com.Jabaklahbackend.services.AgentService;
@@ -35,8 +36,8 @@ public class AgentController {
     public ResponseEntity<Response> getAllClients(){
         return ResponseEntity.ok(
                 Response.builder()
-                        .statusCode(HttpStatus.CREATED.value())
-                        .status(HttpStatus.CREATED)
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
                         .data(Map.of("clients", agentService.getListClient()))
                         .message("list of all clients")
                         .build()
@@ -88,4 +89,40 @@ public class AgentController {
                         .build()
         );
     }
+    @GetMapping("/listProspect")
+    public ResponseEntity<Response> getAllProspects(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("prospects", agentService.getListProspects()))
+                        .message("list of all prospects")
+                        .build()
+        );
+    }
+
+    @PostMapping("/approve")
+    public ResponseEntity<Response> saveClient(@RequestBody ProspectRequest prospect){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .status(HttpStatus.CREATED)
+                        .data(Map.of("client",agentService.convertProspectToClient(prospect)))
+                        .message("Client created")
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/deleteProspect/{id}")
+    public ResponseEntity<Response> deleteProspect(@PathVariable Long id){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("deleted", agentService.deleteProspect(id)))
+                        .message("prospect deleted")
+                        .build()
+        );
+    }
+
 }

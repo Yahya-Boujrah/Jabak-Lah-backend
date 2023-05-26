@@ -11,10 +11,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -38,7 +35,17 @@ public class CMIController {
                         .build()
         );
     }
-
+    @PostMapping("/charger/{id}")
+    public ResponseEntity<Response> chargerSolde(@PathVariable Long id , @RequestBody BigDecimal amount){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("chargement effectue avec succees de " + amount)
+                        .data(Map.of("client", cmiService.chargerSolde(id,amount)))
+                        .build()
+        );
+    }
 
     @PostMapping("/payment-intent")
     public ResponseEntity<Response> createPaymentIntent(@RequestBody PaymentInfo paymentInfo) throws StripeException {

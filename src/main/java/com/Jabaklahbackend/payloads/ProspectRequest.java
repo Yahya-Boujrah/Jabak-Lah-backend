@@ -19,5 +19,4 @@ public class ProspectRequest {
     private String phone;
     private String cin;
     private AccountType type;
-    private String password;
 }

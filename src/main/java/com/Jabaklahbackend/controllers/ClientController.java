@@ -28,7 +28,7 @@ public class ClientController {
 
     private final BillService billService;
 
-
+    private final ClientService clientService;
     private final OrderService orderService;
 
     @GetMapping("/creditors")
@@ -158,4 +158,15 @@ public class ClientController {
         );
     }
 
+    @GetMapping("/infos")
+    public ResponseEntity<Response> getInfos(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("infos of user" )
+                        .data(Map.of("client",clientService.getInfos()))
+                        .build()
+        );
+    }
 }

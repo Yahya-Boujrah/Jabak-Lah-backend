@@ -15,10 +15,9 @@ import org.springframework.stereotype.Service;
 public class ClientService {
     private final ProspectRepo prospectRepo;
     private final ClientRepo clientRepo;
-    private final PasswordEncoder passwordEncoder;
 
     public Prospect saveProspect(ProspectRequest request){
-        System.out.println(request.getType());
+
         Prospect prospect = Prospect.builder()
                 .lastName(request.getLastName())
                 .firstName(request.getFirstName())
@@ -27,14 +26,13 @@ public class ClientService {
                 .username(request.getUsername())
                 .type(request.getType())
                 .phone(request.getPhone())
-                .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
         return prospectRepo.save(prospect);
     }
     public Client getInfos(){
-        String currentUserPhone = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return clientRepo.findByPhone(currentUserPhone).orElseThrow();
+        String currentUserPhone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
+        return clientRepo.findByPhone(currentUserPhone.split(":")[0]).orElseThrow();
 
     }
 

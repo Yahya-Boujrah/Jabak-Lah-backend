@@ -10,7 +10,6 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,41 +26,43 @@ import java.util.stream.Collectors;
 import static com.Jabaklahbackend.services.BillService.appBill;
 
 @Service
+@RequiredArgsConstructor
 public class CMIService {
+    private final ClientRepo clientRepo;
 
-    @Autowired
-    private ClientRepo clientRepo;
+    private final BillRepo billRepo;
 
-    @Autowired
-    private BillRepo billRepo;
+    private final DebtRepo debtRepo;
 
-    @Autowired
-    private DebtRepo debtRepo;
+    private  final PasswordGeneratorService passwordGenerator;
 
-    @Autowired
-    private  PasswordGeneratorService passwordGenerator;
+    private final SmsService smsService;
 
-    @Autowired
-    private SmsService smsService;
+    private final OrderService orderService;
 
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private OrderRepo orderRepo;
+    private final OrderRepo orderRepo;
 
     @Value("${stripe.key.secret}")
     private String secretKey;
 
+    public Client chargerSolde(Long id, BigDecimal amount){
+        if(amount == null){
+            throw new IllegalStateException("cannot charge null amount");
+        }
+        Client client = clientRepo.findById(id).orElseThrow();
+        BigDecimal newBalance = client.getBalance().add(amount);
 
+        client.setBalance(newBalance);
 
-    public boolean chargerSolde(BigDecimal amount){
+        return clientRepo.save(client);
+    }
+
+    public Boolean chargerSolde(BigDecimal amount){
         if(amount == null){
             throw new IllegalStateException("cannot charge null amount");
         }
 
         String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
-
         Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
         BigDecimal newBalance = client.getBalance().add(amount);
 

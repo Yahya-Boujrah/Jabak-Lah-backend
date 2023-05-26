@@ -20,13 +20,15 @@ public class Prospect {
     private Long id;
     private String firstName;
     private String lastName;
+    @Column(nullable = false, unique = true)
     private String username;
     @Enumerated(EnumType.STRING)
     private AccountType type;
     private String email;
+    @Column(nullable = false, unique = true)
     private String phone;
+
     private String cin;
-    private String password;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
