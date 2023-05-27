@@ -137,6 +137,7 @@ public class CMIService {
          order.setDebts(productDebts);
          order.setTotalPrice(total);
          order.setOrderTrackingNumber(orderService.generateOrderTrackingNumber());
+         order.setStatus(OrderStatus.ORDER_ON_PROCESS);
          order.setClient(client);
 
          orderRepo.save(order);
