@@ -24,7 +24,8 @@ public class Order {
 
     private BigDecimal totalPrice;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     private String orderTrackingNumber;
     @CreationTimestamp
@@ -32,7 +33,6 @@ public class Order {
 
     @UpdateTimestamp
     private Date lastUpdated;
-
 
     @JsonIgnore
     @OneToOne

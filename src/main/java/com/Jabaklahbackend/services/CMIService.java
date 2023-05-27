@@ -90,61 +90,62 @@ public class CMIService {
 
         return PaymentIntent.create(params);
     }
+    public String payBill1(){
+        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
 
-//    public String payBill1(){
-//        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
-//        Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
-//
-//        if(client.getBalance().compareTo( appBill.getTotalAmount() ) == -1)
-//            throw new IllegalStateException("Client does not have enough balance");
-//
-//        BigDecimal newBalance = client.getBalance().subtract(appBill.getTotalAmount());
-//
-//        client.setBalance(newBalance);
-//
-//        appBill.setPaid(Boolean.TRUE);
-//
-//        billRepo.save(appBill);
-//
-//        List<Debt> debts = debtRepo.findByBill(appBill).orElseThrow();
-//
-//        List<Debt> mappedDebts =  debts.stream()
-//                .map(debt -> {
-//                    debt.setPaid(Boolean.TRUE);
-//                    return debt;
-//                })
-//                .collect(Collectors.toList());
-//
-//        debtRepo.saveAll(mappedDebts);
-//        clientRepo.save(client);
-//
-//        appBill = billRepo.save(
-//                Bill.builder()
-//                        .client(client)
-//                        .paid(Boolean.FALSE)
-//                        .totalAmount(BigDecimal.ZERO)
-//                        .build()
-//        );
-//
-//         List<Debt> productDebts = mappedDebts.stream().filter(debt -> debt.getType() == DebtType.PRODUCT).collect(Collectors.toList());
-//
-//         BigDecimal total = new BigDecimal(0);
-//
-//         for(Debt debt : productDebts){
-//             total = total.add(debt.getAmount());
-//         }
-//
-//         Order order = new Order();
-//         order.setDebts(productDebts);
-//         order.setTotalPrice(total);
-//         order.setOrderTrackingNumber(orderService.generateOrderTrackingNumber());
-//         order.setClient(client);
-//
-//         orderRepo.save(order);
-//
-//        return "Balance updated and bill paid";
-//
-//    }
+        if(client.getBalance().compareTo( appBill.getTotalAmount() ) == -1)
+            throw new IllegalStateException("Client do not have enough balance");
+
+        BigDecimal newBalance = client.getBalance().subtract(appBill.getTotalAmount());
+
+        client.setBalance(newBalance);
+
+        appBill.setPaid(Boolean.TRUE);
+
+        billRepo.save(appBill);
+
+        List<Debt> debts = debtRepo.findByBill(appBill).orElseThrow();
+
+        List<Debt> mappedDebts =  debts.stream()
+                .map(debt -> {
+                    debt.setPaid(Boolean.TRUE);
+                    return debt;
+                })
+                .collect(Collectors.toList());
+
+        debtRepo.saveAll(mappedDebts);
+        clientRepo.save(client);
+
+        appBill = billRepo.save(
+                Bill.builder()
+                        .client(client)
+                        .paid(Boolean.FALSE)
+                        .totalAmount(BigDecimal.ZERO)
+                        .build()
+        );
+
+         List<Debt> productDebts = mappedDebts.stream().filter(debt -> debt.getType() == DebtType.PRODUCT).collect(Collectors.toList());
+
+         BigDecimal total = new BigDecimal(0);
+
+         for(Debt debt : productDebts){
+             total = total.add(debt.getAmount());
+         }
+
+         Order order = new Order();
+         order.setDebts(productDebts);
+         order.setTotalPrice(total);
+         order.setOrderTrackingNumber(orderService.generateOrderTrackingNumber());
+         order.setStatus(OrderStatus.ORDER_ON_PROCESS);
+         order.setClient(client);
+
+         orderRepo.save(order);
+
+        return "Balance updated and bill paid";
+
+    }
+
 public String payBill(){
     System.out.println("in paybill service");
     String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();

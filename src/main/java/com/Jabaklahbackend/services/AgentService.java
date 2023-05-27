@@ -1,18 +1,21 @@
 package com.Jabaklahbackend.services;
 
-import com.Jabaklahbackend.entities.Client;
-import com.Jabaklahbackend.entities.Prospect;
-import com.Jabaklahbackend.entities.Role;
+import com.Jabaklahbackend.email.EmailSender;
+import com.Jabaklahbackend.email.EmailUtil;
+import com.Jabaklahbackend.entities.*;
+import com.Jabaklahbackend.payloads.ChangePasswordRequest;
 import com.Jabaklahbackend.payloads.ClientRequest;
 import com.Jabaklahbackend.payloads.ProspectRequest;
+import com.Jabaklahbackend.repositories.AgentRepo;
 import com.Jabaklahbackend.repositories.ClientRepo;
 import com.Jabaklahbackend.repositories.ProspectRepo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -21,6 +24,14 @@ public class AgentService {
 
     private final ClientRepo clientRepo;
     private final ProspectRepo prospectRepo;
+    private final AgentRepo agentRepo;
+    private final PasswordEncoder passwordEncoder;
+
+    private final PasswordGeneratorService passwordGenerator;
+
+    private final EmailSender sender;
+
+    private final EmailUtil emailUtil;
 
     public Client saveClient(ClientRequest request){
 
@@ -37,8 +48,12 @@ public class AgentService {
         client.setBirthDate(request.getBirthDate());
         client.setRole(Role.CLIENT);
         client.setUsername(request.getUsername());
-        client.setPassword(new BCryptPasswordEncoder().encode("123"));
 
+        String newPassword = passwordGenerator.passwordForEmail();
+
+        client.setPassword(passwordEncoder.encode(newPassword));
+
+        sendEmail(client.getEmail(), client.getUsername(), newPassword );
         return clientRepo.save(client);
 
     }
@@ -89,8 +104,12 @@ public class AgentService {
         client.setFirstName(request.getFirstName());
         client.setRole(Role.CLIENT);
         client.setUsername(request.getUsername());
-        client.setPassword(new BCryptPasswordEncoder().encode("123"));
 
+        String newPassword = passwordGenerator.passwordForEmail();
+
+        client.setPassword(passwordEncoder.encode(newPassword));
+
+        sendEmail(client.getEmail(), client.getUsername(), newPassword );
         clientRepo.save(client);
         prospectRepo.delete(prospectRepo.findByPhone(request.getPhone()).orElseThrow());
 
@@ -98,9 +117,32 @@ public class AgentService {
     }
 
     public Boolean deleteProspect(Long id){
-
         Prospect prospect = prospectRepo.findById(id).orElseThrow();
         prospectRepo.delete(prospect);
         return Boolean.TRUE;
+    }
+    public Agent getInfos(){
+        String currentUsername= (String) SecurityContextHolder.getContext().getAuthentication().getName();
+        return agentRepo.findByUsername(currentUsername.split(":")[0]).orElseThrow();
+
+    }
+    public Boolean changePassword(ChangePasswordRequest request){
+        Agent agent  = (Agent) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(!passwordEncoder.matches(request.getOldPassword(), agent.getPassword())){
+            new IllegalStateException("bad password");
+        }
+        String newPassEncoded = passwordEncoder.encode(request.getNewPassword());
+        agent.setPassword(newPassEncoded);
+        agent.setUsername(agent.getUsername().split(":")[0]);
+        agent.setPasswordChanged(Boolean.TRUE);
+        agentRepo.save(agent);
+
+        return Boolean.TRUE;
+    }
+
+    @Async
+    public void sendEmail(String email, String name, String password){
+        this.sender.send(email, emailUtil.buildEmail(name, password));
     }
 }
