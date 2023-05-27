@@ -40,6 +40,4 @@ public class Bill {
         this.createdAt = LocalDateTime.now();
     }
 
-//    public void setVerificationCodeSentAt(LocalDateTime now) {
-//    }
 }

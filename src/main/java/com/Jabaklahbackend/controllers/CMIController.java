@@ -67,8 +67,21 @@ public class CMIController {
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .message(cmiService.payBill1())
+                        .message(cmiService.payBill())
                         .build()
         );
     }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<Response> confirmBill(@RequestBody String verificationCode){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message(cmiService.confirmBillPayment(verificationCode))
+                        .build()
+        );
+    }
+
+
 }
