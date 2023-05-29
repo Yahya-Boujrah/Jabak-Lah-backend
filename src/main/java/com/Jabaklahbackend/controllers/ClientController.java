@@ -3,11 +3,14 @@ package com.Jabaklahbackend.controllers;
 
 import com.Jabaklahbackend.entities.Debt;
 import com.Jabaklahbackend.entities.Product;
+import com.Jabaklahbackend.payloads.ChangePasswordRequest;
 import com.Jabaklahbackend.payloads.Response;
 import com.Jabaklahbackend.services.*;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -170,6 +173,19 @@ public class ClientController {
         );
     }
 
+    @SneakyThrows
+    @PutMapping("/changePassword")
+    public ResponseEntity<Response> changePassword(@RequestBody String password){
 
+        System.out.println(password);
 
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("changed", clientService.changePassword(password) ))
+                        .message("password changed")
+                        .build()
+        );
+    }
 }
