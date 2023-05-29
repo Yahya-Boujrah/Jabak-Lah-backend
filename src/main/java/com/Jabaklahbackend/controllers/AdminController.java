@@ -153,6 +153,17 @@ public class AdminController {
                         .build()
         );
     }
+    @GetMapping("/infos")
+    public ResponseEntity<Response> getInfos(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("infos of user" )
+                        .data(Map.of("admin",adminService.getInfos()))
+                        .build()
+        );
+    }
     @SneakyThrows
     @PutMapping("/changePassword")
     public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest request){
@@ -165,6 +176,29 @@ public class AdminController {
                         .build()
         );
     }
+    @PutMapping("/resetPasswordAgent/{id}")
+    public ResponseEntity<Response> resetPasswordAgent(@PathVariable Long id){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("reset", adminService.resetPasswordAgent(id)))
+                        .message("password reset successfully")
+                        .build()
+        );
+    }
+    @PutMapping("/resetPasswordClient/{id}")
+    public ResponseEntity<Response> resetPasswordClient(@PathVariable Long id){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("reset", adminService.resetPasswordClient(id)))
+                        .message("password reset successfully")
+                        .build()
+        );
+    }
+
 }
 
 

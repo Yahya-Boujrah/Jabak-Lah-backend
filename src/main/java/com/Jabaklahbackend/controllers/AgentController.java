@@ -2,12 +2,14 @@ package com.Jabaklahbackend.controllers;
 
 
 import com.Jabaklahbackend.entities.Client;
+import com.Jabaklahbackend.payloads.ChangePasswordRequest;
 import com.Jabaklahbackend.payloads.ClientRequest;
 import com.Jabaklahbackend.payloads.ProspectRequest;
 import com.Jabaklahbackend.payloads.Response;
 import com.Jabaklahbackend.services.AdminService;
 import com.Jabaklahbackend.services.AgentService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -121,6 +123,42 @@ public class AgentController {
                         .status(HttpStatus.OK)
                         .data(Map.of("deleted", agentService.deleteProspect(id)))
                         .message("prospect deleted")
+                        .build()
+        );
+    }
+    @GetMapping("/infos")
+    public ResponseEntity<Response> getInfos(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("infos of user" )
+                        .data(Map.of("agent",agentService.getInfos()))
+                        .build()
+        );
+    }
+
+    @SneakyThrows
+    @PutMapping("/changePassword")
+    public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest request){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("changed", agentService.changePassword(request) ))
+                        .message("password changed")
+                        .build()
+        );
+    }
+
+    @PutMapping("/resetPasswordClient/{id}")
+    public ResponseEntity<Response> resetPasswordClient(@PathVariable Long id){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("reset", adminService.resetPasswordClient(id)))
+                        .message("password reset successfully")
                         .build()
         );
     }

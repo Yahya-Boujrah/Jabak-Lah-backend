@@ -1,13 +1,18 @@
 package com.Jabaklahbackend.services;
 
+import com.Jabaklahbackend.email.EmailSender;
+import com.Jabaklahbackend.email.EmailUtil;
 import com.Jabaklahbackend.entities.Admin;
 import com.Jabaklahbackend.entities.Agent;
+import com.Jabaklahbackend.entities.Client;
 import com.Jabaklahbackend.entities.Role;
 import com.Jabaklahbackend.payloads.ChangePasswordRequest;
 import com.Jabaklahbackend.repositories.AdminRepo;
 import com.Jabaklahbackend.repositories.AgentRepo;
+import com.Jabaklahbackend.repositories.ClientRepo;
 import exception.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,8 +25,14 @@ import java.util.List;
 public class AdminService {
     private final AgentRepo agentRepository;
     private final AdminRepo adminRepo;
-
+    private final ClientRepo clientRepo;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordGeneratorService passwordGenerator;
+
+    private final EmailSender sender;
+
+    private final EmailUtil emailUtil;
+
     public List<Admin> findAllAdmins(){
         return adminRepo.findAll();
     }
@@ -31,11 +42,15 @@ public class AdminService {
 
     }
     public Agent saveAgent(Agent agent){
-
         if (agentRepository.existsByUsername(agent.getUsername())) throw new IllegalStateException("agent already exists");
 
-        agent.setPassword(new BCryptPasswordEncoder().encode("123"));
         agent.setRole(Role.AGENT);
+
+        String newPassword = passwordGenerator.passwordForEmail();
+
+        agent.setPassword(passwordEncoder.encode(newPassword));
+
+        sendEmail(agent.getEmail(), agent.getUsername(), newPassword );
         return agentRepository.save(agent);
     }
 
@@ -44,8 +59,6 @@ public class AdminService {
     }
 
     public Agent updateAgent(Agent updatedAgent, Long id ){
-        System.out.println("id  "+ updatedAgent.getId());
-        System.out.println("id  "+ id);
         Agent agent = agentRepository.findById(id).orElseThrow(()->new ResourceNotFound("Agent dosnt exist  with id :"+id));
 
         agent.setFirstName(updatedAgent.getFirstName());
@@ -59,7 +72,6 @@ public class AdminService {
         agent.setCin(updatedAgent.getCin());
         agent.setPatentNumber(updatedAgent.getPatentNumber());
         agent.setImmatricule(updatedAgent.getImmatricule());
-        System.out.println("id  "+ agent.getId());
 
         return agentRepository.save(agent);
     }
@@ -84,5 +96,40 @@ public class AdminService {
         adminRepo.save(admin);
 
         return Boolean.TRUE;
+    }
+    public Boolean resetPasswordAgent(Long id){
+        Agent agent = agentRepository.findById(id).orElseThrow();
+        String newPassword = passwordGenerator.passwordForEmail();
+
+        agent.setPassword(passwordEncoder.encode(newPassword));
+
+        agentRepository.save(agent);
+
+        sendEmail(agent.getEmail(), agent.getUsername(), newPassword );
+
+        return Boolean.TRUE;
+    }
+
+    public Boolean resetPasswordClient(Long id){
+        Client client = clientRepo.findById(id).orElseThrow();
+        String newPassword = passwordGenerator.passwordForEmail();
+
+        client.setPassword(passwordEncoder.encode(newPassword));
+
+        clientRepo.save(client);
+
+        sendEmail(client.getEmail(), client.getUsername(), newPassword );
+
+        return Boolean.TRUE;
+    }
+
+    @Async
+    public void sendEmail(String email, String name, String password){
+        this.sender.send(email, emailUtil.buildEmail(name, password));
+    }
+
+    public Admin getInfos(){
+        String currentUser= (String) SecurityContextHolder.getContext().getAuthentication().getName();
+        return adminRepo.findByUsername(currentUser.split(":")[0]).orElseThrow();
     }
 }
