@@ -35,6 +35,8 @@ public class AgentService {
 
     public Client saveClient(ClientRequest request){
 
+        if (clientRepo.existsByPhone(request.getPhone())) throw new IllegalStateException("client already exists");
+
         Client client = Client.builder()
                 .balance(BigDecimal.ZERO)
                 .accountType(request.getAccountType())

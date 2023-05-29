@@ -1,5 +1,6 @@
 package com.Jabaklahbackend.security.auth;
 
+import com.Jabaklahbackend.entities.Client;
 import com.Jabaklahbackend.entities.User;
 import com.Jabaklahbackend.payloads.AdminAuthRequest;
 import com.Jabaklahbackend.payloads.AuthenticationResponse;
@@ -10,6 +11,7 @@ import com.Jabaklahbackend.security.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,6 +59,13 @@ public class AuthenticationService {
                 .user(user)
                 .token(jwtToken)
                 .build();
+    }
+
+
+    public Boolean isPasswordChanged(){
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
+        return client.isPasswordChanged();
     }
 
 }
