@@ -181,7 +181,6 @@ public String confirmBillPayment(String verificationCode){
     System.out.println(verificationCode);
 
     System.out.println(minutes);
-
         if ( appBill.getVerificationCode().equals(verificationCode)) {
             if (minutes <= 5) {
 

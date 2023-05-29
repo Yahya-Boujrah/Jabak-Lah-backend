@@ -1,7 +1,9 @@
 package com.Jabaklahbackend.services;
 
+import com.Jabaklahbackend.entities.Agent;
 import com.Jabaklahbackend.entities.Client;
 import com.Jabaklahbackend.entities.Prospect;
+import com.Jabaklahbackend.payloads.ChangePasswordRequest;
 import com.Jabaklahbackend.payloads.ProspectRequest;
 import com.Jabaklahbackend.repositories.ClientRepo;
 import com.Jabaklahbackend.repositories.ProspectRepo;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 public class ClientService {
     private final ProspectRepo prospectRepo;
     private final ClientRepo clientRepo;
+
+    private final PasswordEncoder passwordEncoder;
 
     public Prospect saveProspect(ProspectRequest request){
 
@@ -40,6 +44,20 @@ public class ClientService {
 
     }
 
+<<<<<<< HEAD
 
+=======
+    public Boolean changePassword(String password){
+        String phone  = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
+
+        client.setPassword(passwordEncoder.encode(password));
+        client.setPasswordChanged(Boolean.TRUE);
+        clientRepo.save(client);
+
+        return Boolean.TRUE;
+    }
+>>>>>>> 3fad24c (change password logic)
 
 }
