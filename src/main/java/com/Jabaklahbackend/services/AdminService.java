@@ -31,6 +31,9 @@ public class AdminService {
 
     }
     public Agent saveAgent(Agent agent){
+
+        if (agentRepository.existsByUsername(agent.getUsername())) throw new IllegalStateException("agent already exists");
+
         agent.setPassword(new BCryptPasswordEncoder().encode("123"));
         agent.setRole(Role.AGENT);
         return agentRepository.save(agent);

@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface AgentRepo extends JpaRepository<Agent,Long> {
     Optional<Agent> findByUsername(String username);
+
+    public Boolean existsByUsername(String Username);
 }

@@ -18,6 +18,10 @@ public class ClientService {
 
     public Prospect saveProspect(ProspectRequest request){
 
+        if (prospectRepo.existsByPhone(request.getPhone())) throw new IllegalStateException("prospect already exists");
+
+        if (clientRepo.existsByPhone(request.getPhone())) throw new IllegalStateException("client already exists");
+
         Prospect prospect = Prospect.builder()
                 .lastName(request.getLastName())
                 .firstName(request.getFirstName())
@@ -35,5 +39,7 @@ public class ClientService {
         return clientRepo.findByPhone(currentUserPhone.split(":")[0]).orElseThrow();
 
     }
+
+
 
 }

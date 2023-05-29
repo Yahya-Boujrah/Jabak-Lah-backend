@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface ProspectRepo extends JpaRepository<Prospect,Long> {
 
     Optional<Prospect> findByPhone(String phone);
+
+     public Boolean existsByPhone(String phone);
 }
