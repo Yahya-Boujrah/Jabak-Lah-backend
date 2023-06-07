@@ -44,9 +44,7 @@ public class ClientService {
 
     }
 
-<<<<<<< HEAD
 
-=======
     public Boolean changePassword(String password){
         String phone  = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -58,6 +56,4 @@ public class ClientService {
 
         return Boolean.TRUE;
     }
->>>>>>> 3fad24c (change password logic)
-
 }
