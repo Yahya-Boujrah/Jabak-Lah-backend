@@ -20,7 +20,7 @@ public class ClientService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public Prospect saveProspect(ProspectRequest request){
+    public Prospect saveProspect(ProspectRequest request) {
 
         if (prospectRepo.existsByPhone(request.getPhone())) throw new IllegalStateException("prospect already exists");
 
@@ -38,17 +38,15 @@ public class ClientService {
 
         return prospectRepo.save(prospect);
     }
-    public Client getInfos(){
+
+    public Client getInfos() {
         String currentUserPhone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
         return clientRepo.findByPhone(currentUserPhone.split(":")[0]).orElseThrow();
 
     }
 
-<<<<<<< HEAD
-
-=======
-    public Boolean changePassword(String password){
-        String phone  = SecurityContextHolder.getContext().getAuthentication().getName();
+    public Boolean changePassword(String password) {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
 
@@ -58,6 +56,4 @@ public class ClientService {
 
         return Boolean.TRUE;
     }
->>>>>>> 3fad24c (change password logic)
-
 }
