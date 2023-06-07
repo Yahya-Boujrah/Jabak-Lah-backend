@@ -111,7 +111,7 @@ public class ClientController {
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
                         .message("Debt binded to bill " + appBill.getId())
-                        .data(Map.of("debt", debtService.bindToBill(debtIds)))
+                        .data(Map.of("debts", debtService.bindToBill(debtIds)))
                         .build()
         );
     }
@@ -126,6 +126,19 @@ public class ClientController {
                         .build()
         );
     }
+    @PutMapping("/debt/delete/{id}")
+    public ResponseEntity<Response> bindDebtToBill(@PathVariable Long id){
+
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("Debt deleted from bill " + appBill.getId())
+                        .data(Map.of("debt", debtService.deleteDebtFromBill(id)))
+                        .build()
+        );
+    }
+
     @GetMapping("/history")
     public ResponseEntity<Response> getHistory(){
         return ResponseEntity.ok(
@@ -147,7 +160,6 @@ public class ClientController {
                         .build()
         );
     }
-
 
     @PostMapping("/addProduct")
     public ResponseEntity<Response> addOrderToBill(@RequestBody Product product){

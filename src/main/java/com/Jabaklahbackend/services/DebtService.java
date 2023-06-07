@@ -34,11 +34,14 @@ public class DebtService {
     }
 
     public Debt createDebt(Debt debt){
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
+        debt.setClient(client);
         Debt newDebt = debtRepo.save(debt);
         bindToBill(debt);
         return newDebt;
     }
-
 
     public Debt createDebt(Product product){
 
@@ -53,11 +56,11 @@ public class DebtService {
         debt.setClient(client);
         debt.setAmount(product.getUnitPrice());
         debt.setType(DebtType.PRODUCT);
+
         bindToBill(debt);
 
         return debtRepo.save(debt);
     }
-
 
     public Debt bindToBill(Debt debt){
         debt.setBill(appBill);
@@ -80,6 +83,12 @@ public class DebtService {
         return debtRepo.saveAll(debts);
     }
 
+    public  Debt deleteDebtFromBill(Long id){
+        Debt debt = debtRepo.findById(id).orElseThrow();
+        debt.setBill(null);
+
+        return debtRepo.save(debt);
+    }
     @Async
     public List<Debt> generateDueDebts() {
 

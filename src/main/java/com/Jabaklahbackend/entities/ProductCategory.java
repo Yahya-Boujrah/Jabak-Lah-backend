@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name="product_category")
@@ -21,11 +21,9 @@ public class ProductCategory {
     @Column(name = "category_name")
     private String categoryName;
 
-
-
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
-    private Set<Product> products;
+    private List<Product> products;
 
 }
 
