@@ -45,7 +45,7 @@ public class AppConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry
                         .addMapping("/**")
-                        .allowedOrigins("https://jabak-lah-app.herokuapp.com","https://clientportal-7cc7b.web.app")
+                        .allowedOrigins("http://localhost:4200","https://clientportal-7cc7b.web.app","https://agent-portal-87544.web.app","https://admin-portal-7306b.web.app")
                         .allowedMethods("*")
                         .allowedHeaders("*");
             }
