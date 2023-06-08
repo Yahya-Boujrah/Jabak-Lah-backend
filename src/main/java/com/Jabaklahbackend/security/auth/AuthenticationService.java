@@ -33,6 +33,9 @@ public class AuthenticationService {
     AuthenticationManager authenticationManager;
 
     public AuthenticationResponse authenticate(AdminAuthRequest request) {
+        
+         System.out.println(clientRepo.findAll());
+        
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
