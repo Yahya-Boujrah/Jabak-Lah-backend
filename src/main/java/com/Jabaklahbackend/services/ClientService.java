@@ -45,8 +45,10 @@ public class ClientService {
 
     }
 
-    public Boolean changePassword(String password) {
-        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+
+
+    public Boolean changePassword(String password){
+        String phone  = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
 
@@ -56,4 +58,6 @@ public class ClientService {
 
         return Boolean.TRUE;
     }
+
 }
+
