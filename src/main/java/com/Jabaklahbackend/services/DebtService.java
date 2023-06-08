@@ -16,6 +16,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.Jabaklahbackend.services.BillService.appBill;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 @Service
 @RequiredArgsConstructor
@@ -76,7 +78,7 @@ public class DebtService {
         debts.forEach(debt ->{
             debt.setBill(appBill);
             appBill.setTotalAmount(appBill.getTotalAmount().add(debt.getAmount()));
-
+            debt.setAddedToBill(TRUE);
         });
 
         billRepo.save(appBill);
@@ -86,6 +88,7 @@ public class DebtService {
     public  Debt deleteDebtFromBill(Long id){
         Debt debt = debtRepo.findById(id).orElseThrow();
         debt.setBill(null);
+        debt.setAddedToBill(FALSE);
 
         return debtRepo.save(debt);
     }
@@ -122,6 +125,7 @@ public class DebtService {
                         .name(article.getName())
                         .description("This is a debt for " + article.getName())
                         .paid(Boolean.FALSE)
+                        .addedToBill(Boolean.FALSE)
                         .build();
                 debts.add(debt);
             }
@@ -135,6 +139,7 @@ public class DebtService {
                         .name(article.getName())
                         .description("This is a debt for " + article.getName())
                         .paid(Boolean.FALSE)
+                        .addedToBill(Boolean.FALSE)
                         .build();
 
                 Debt penalty = Debt.builder()
@@ -146,6 +151,7 @@ public class DebtService {
                         .name(article.getName())
                         .description("This is a penalty for " + article.getName())
                         .paid(Boolean.FALSE)
+                        .addedToBill(Boolean.FALSE)
                         .build();
 
                 debts.addAll(Arrays.asList(debt, penalty));
