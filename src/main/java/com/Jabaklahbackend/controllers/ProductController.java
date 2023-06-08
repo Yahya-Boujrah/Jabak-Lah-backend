@@ -33,7 +33,8 @@ public class ProductController {
 
     @GetMapping("/search/findByCategoryId/{id}")
     ResponseEntity<Response> getProductsByCategory(@PathVariable Long id){
-
+       
+        System.out.println("fetching products by category " + id);
         return ResponseEntity.ok(Response.builder()
                 .statusCode(HttpStatus.OK.value())
                 .status(HttpStatus.OK)
