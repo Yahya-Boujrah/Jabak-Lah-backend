@@ -2,10 +2,7 @@ package com.Jabaklahbackend.services;
 
 import com.Jabaklahbackend.entities.*;
 import com.Jabaklahbackend.payloads.PaymentInfo;
-import com.Jabaklahbackend.repositories.BillRepo;
-import com.Jabaklahbackend.repositories.ClientRepo;
-import com.Jabaklahbackend.repositories.DebtRepo;
-import com.Jabaklahbackend.repositories.OrderRepo;
+import com.Jabaklahbackend.repositories.*;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
@@ -41,6 +38,8 @@ public class CMIService {
     private final OrderService orderService;
 
     private final OrderRepo orderRepo;
+
+    private final ProductRepo productRepo;
 
 
     @Value("${stripe.key.secret}")
@@ -90,61 +89,6 @@ public class CMIService {
 
         return PaymentIntent.create(params);
     }
-    public String payBill1(){
-        String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
-
-        if(client.getBalance().compareTo( appBill.getTotalAmount() ) == -1)
-            throw new IllegalStateException("Client do not have enough balance");
-
-        BigDecimal newBalance = client.getBalance().subtract(appBill.getTotalAmount());
-
-        client.setBalance(newBalance);
-
-        appBill.setPaid(Boolean.TRUE);
-
-        billRepo.save(appBill);
-
-        List<Debt> debts = debtRepo.findByBill(appBill).orElseThrow();
-
-        List<Debt> mappedDebts =  debts.stream()
-                .map(debt -> {
-                    debt.setPaid(Boolean.TRUE);
-                    return debt;
-                })
-                .collect(Collectors.toList());
-
-        debtRepo.saveAll(mappedDebts);
-        clientRepo.save(client);
-
-        appBill = billRepo.save(
-                Bill.builder()
-                        .client(client)
-                        .paid(Boolean.FALSE)
-                        .totalAmount(BigDecimal.ZERO)
-                        .build()
-        );
-
-         List<Debt> productDebts = mappedDebts.stream().filter(debt -> debt.getType() == DebtType.PRODUCT).collect(Collectors.toList());
-
-         BigDecimal total = new BigDecimal(0);
-
-         for(Debt debt : productDebts){
-             total = total.add(debt.getAmount());
-         }
-
-         Order order = new Order();
-         order.setDebts(productDebts);
-         order.setTotalPrice(total);
-         order.setOrderTrackingNumber(orderService.generateOrderTrackingNumber());
-         order.setStatus(OrderStatus.ORDER_ON_PROCESS);
-         order.setClient(client);
-
-         orderRepo.save(order);
-
-        return "Balance updated and bill paid";
-
-    }
 
 public String payBill(){
     System.out.println("in paybill service");
@@ -169,42 +113,28 @@ public String payBill(){
 public String confirmBillPayment(String verificationCode){
         String phone = (String) SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientRepo.findByPhone(phone.split(":")[0]).orElseThrow();
-
         if(client.getBalance().compareTo( appBill.getTotalAmount() ) == -1)
             throw new IllegalStateException("Client does not have enough balance");
 
         int minutes = (int) ChronoUnit.MINUTES.between(appBill.getVerificationCodeSentAt(), LocalDateTime.now());
-
-
     System.out.println(appBill.getVerificationCode());
-
     System.out.println(verificationCode);
-
     System.out.println(minutes);
         if ( appBill.getVerificationCode().equals(verificationCode)) {
             if (minutes <= 5) {
-
-
                 BigDecimal newBalance = client.getBalance().subtract(appBill.getTotalAmount());
-
                 client.setBalance(newBalance);
-
                 appBill.setPaid(Boolean.TRUE);
-
                 billRepo.save(appBill);
-
                 List<Debt> debts = debtRepo.findByBill(appBill).orElseThrow();
-
                 List<Debt> mappedDebts =  debts.stream()
                         .map(debt -> {
                             debt.setPaid(Boolean.TRUE);
                             return debt;
                         })
                         .collect(Collectors.toList());
-
                 debtRepo.saveAll(mappedDebts);
                 clientRepo.save(client);
-
                 appBill = billRepo.save(
                         Bill.builder()
                                 .client(client)
@@ -212,29 +142,32 @@ public String confirmBillPayment(String verificationCode){
                                 .totalAmount(BigDecimal.ZERO)
                                 .build()
                 );
-
                 List<Debt> productDebts = mappedDebts.stream().filter(debt -> debt.getType() == DebtType.PRODUCT).collect(Collectors.toList());
-
                 BigDecimal total = new BigDecimal(0);
-
+                List<Long> debtIds = new ArrayList<>();
                 for(Debt debt : productDebts){
                     total = total.add(debt.getAmount());
+                    debtIds.add(debt.getId());
                 }
+                List<Product> products = productRepo.findByDebtIds(debtIds).orElseThrow();
+
+                products.stream().forEach(product -> {
+                    int unit = product.getUnitsInStock();
+                    unit = unit - 1;
+                    product.setUnitsInStock(unit);
+                });
 
                 Order order = new Order();
                 order.setDebts(productDebts);
                 order.setTotalPrice(total);
                 order.setOrderTrackingNumber(orderService.generateOrderTrackingNumber());
                 order.setClient(client);
-
                 orderRepo.save(order);
-
+                productRepo.saveAll(products);
                 return "Balance updated and bill paid";
-
             } else return "verification code expired";
         }
         return "wrong code";
-
     }
 
     String generateVerificationCode(Bill bill, String phone){

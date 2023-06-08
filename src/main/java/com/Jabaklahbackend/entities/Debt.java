@@ -27,6 +27,8 @@ public class Debt {
     private Boolean paid = Boolean.FALSE;
     private BigDecimal amount;
     private LocalDateTime createdAt;
+    @Column(columnDefinition ="tinyint(1) default 0")
+    private Boolean addedToBill = Boolean.FALSE;
 
     @PrePersist
     public void setCreationDateTime() {
