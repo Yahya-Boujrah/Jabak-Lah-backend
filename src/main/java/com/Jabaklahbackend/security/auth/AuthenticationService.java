@@ -35,7 +35,7 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AdminAuthRequest request) {
         
         Client test = clientRepo.findByPhone("0629974866").orElseThrow();
-        System.out.println(test.getUsername());
+        System.out.println(test.getFirstName());
         
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
