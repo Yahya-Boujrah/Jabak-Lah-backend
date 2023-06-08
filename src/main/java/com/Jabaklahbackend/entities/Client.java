@@ -18,7 +18,7 @@ import java.math.BigDecimal;
         @AttributeOverride(name = "phone", column = @Column(nullable = false,unique = true)),
 })
 public class Client extends User{
-//    private String address;
+    private String address;
 
     @Enumerated(EnumType.STRING)
     private AccountType accountType;

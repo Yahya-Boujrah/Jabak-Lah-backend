@@ -30,4 +30,15 @@ public class OrderController {
                         .build()
         );
     }
+    @GetMapping("/allOrders")
+    public ResponseEntity<Response> getAgentOrders(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("orders retrieved ")
+                        .data(Map.of("orders", orderService.getAgentOrders()))
+                        .build()
+        );
+    }
 }

@@ -156,7 +156,7 @@ public class ClientController {
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .message("Bill deleted "+ billService.deleteBill(appBill.getId()))
+                        .message("Bill deleted "+ billService.deleteBill())
                         .build()
         );
     }

@@ -55,19 +55,15 @@ public class BillService {
         return bills;
     }
 
-    public String deleteBill(Long id){
-        Bill bill = billRepo.findById(id).orElseThrow();
-
-        if(bill.getPaid() == Boolean.TRUE){
-            return null;
-        }
+    public String deleteBill(){
         List<Debt> debts = debtRepo.findAll().stream().filter(debt ->
                 debt.getPaid() != Boolean.TRUE
             ).collect(Collectors.toList());
 
+        List<Bill> bills = billRepo.findByPaid().orElseThrow();
 
+        billRepo.deleteAll(bills);
         debtRepo.deleteAll(debts);
-        billRepo.delete(bill);
 
         return "Bill deleted ";
     }

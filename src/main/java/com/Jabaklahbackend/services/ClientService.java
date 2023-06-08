@@ -1,9 +1,7 @@
 package com.Jabaklahbackend.services;
 
-import com.Jabaklahbackend.entities.Agent;
 import com.Jabaklahbackend.entities.Client;
 import com.Jabaklahbackend.entities.Prospect;
-import com.Jabaklahbackend.payloads.ChangePasswordRequest;
 import com.Jabaklahbackend.payloads.ProspectRequest;
 import com.Jabaklahbackend.repositories.ClientRepo;
 import com.Jabaklahbackend.repositories.ProspectRepo;
@@ -43,10 +41,6 @@ public class ClientService {
         return clientRepo.findByPhone(currentUserPhone.split(":")[0]).orElseThrow();
 
     }
-
-<<<<<<< HEAD
-
-=======
     public Boolean changePassword(String password){
         String phone  = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -58,6 +52,5 @@ public class ClientService {
 
         return Boolean.TRUE;
     }
->>>>>>> 3fad24c (change password logic)
 
 }

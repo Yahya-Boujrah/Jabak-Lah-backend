@@ -29,6 +29,11 @@ public class OrderService {
         return orderRepo.findByClient(client).orElseThrow();
     }
 
+
+    public List<Order> getAgentOrders(){
+        return orderRepo.findAll();
+    }
+
     public String generateOrderTrackingNumber() {
 
         return UUID.randomUUID().toString();
