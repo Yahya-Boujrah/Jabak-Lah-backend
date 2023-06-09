@@ -38,10 +38,9 @@ public class AuthenticationService {
     AuthenticationManager authenticationManager;
 
     public AuthenticationResponse authenticate(AdminAuthRequest request) {
-        
-        Client test = clientRepo.findByPhone("0629974866").orElseThrow();
-        System.out.println(test.getFirstName());
-        
+
+        System.out.println(request.getUsername() + " " + request.getPassword());
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
@@ -60,6 +59,7 @@ public class AuthenticationService {
                 break;
             case "LIVREUR" :
                 user = deliveryManRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();
+                break;
             default:
                 throw new UsernameNotFoundException("User not found");
         }

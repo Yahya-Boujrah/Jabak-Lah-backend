@@ -15,7 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DeliveryController {
 
-    private static DeliveryService deliveryService;
+    private final DeliveryService deliveryService;
 
 
     @GetMapping("/getOrders")
