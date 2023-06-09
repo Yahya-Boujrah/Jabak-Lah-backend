@@ -27,7 +27,7 @@ public class DeliveryService {
 
     public List<Order> getOrdersForDG(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        DeliveryMan deliveryMan = deliveryManRepo.findByUsername(username).orElseThrow();
+        DeliveryMan deliveryMan = deliveryManRepo.findByUsername(username.split(":")[0]).orElseThrow();
         return orderRepo.findByDeliveryman(deliveryMan).orElseThrow();
     }
 
