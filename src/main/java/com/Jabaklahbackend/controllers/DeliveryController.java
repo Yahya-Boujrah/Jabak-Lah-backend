@@ -40,14 +40,14 @@ public class DeliveryController {
                         .build()
         );
     }
-    @PutMapping("/updateOrder/{orderId}")
-    public ResponseEntity<Response> updateOrder(@PathVariable Long orderId, @RequestBody String dgId){
+    @PutMapping("/updateOrder/{ids}")
+    public ResponseEntity<Response> updateOrder(@PathVariable("ids") List<Long> ids){
         System.out.println("in controller liv");
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .message("affected" + deliveryService.affectDG2Order( dgId, Long.valueOf(orderId) ) );
+                        .message("affected" + deliveryService.affectDG2Order( ids.get(0), ids.get(1) ) );
                         .build()
         );
     }
