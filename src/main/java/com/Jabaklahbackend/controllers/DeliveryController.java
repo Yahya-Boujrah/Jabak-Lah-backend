@@ -29,6 +29,27 @@ public class DeliveryController {
                         .build()
         );
     }
+    @GetMapping("/deliveryMen")
+    public ResponseEntity<Response> getDeliveryMen(){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .data(Map.of("deliveryMen", deliveryService.deliveryMen()))
+                        .message("list of delivery Men")
+                        .build()
+        );
+    }
+    @PutMapping("/updateOrder/{orderId}")
+    public ResponseEntity<Response> updateOrder(@PathVariable Long orderId, @RequestBody Long dgId){
+        return ResponseEntity.ok(
+                Response.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("affected" + deliveryService.affectDG2Order(dgId, orderId))
+                        .build()
+        );
+    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Response> updateStatus(@PathVariable Long id, @RequestBody String status){

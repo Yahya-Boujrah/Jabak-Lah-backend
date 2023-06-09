@@ -25,12 +25,28 @@ public class DeliveryService {
 
     private final DeliveryManRepo deliveryManRepo;
 
+    public List<DeliveryMan> deliveryMen(){
+        return deliveryManRepo.findAll();
+    }
+    public Boolean affectDG2Order(Long dgId, Long orderId){
+        DeliveryMan dg = deliveryManRepo.findById(dgId).orElseThrow();
+        Order order = orderRepo.findById(orderId).orElseThrow();
+
+        order.setDeliveryman(dg);
+        dg.setOrders(List.of(order));
+
+
+        deliveryManRepo.save(dg);
+        orderRepo.save(order);
+
+        return Boolean.TRUE;
+    }
+
     public List<Order> getOrdersForDG(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         DeliveryMan deliveryMan = deliveryManRepo.findByUsername(username.split(":")[0]).orElseThrow();
         return orderRepo.findByDeliveryman(deliveryMan).orElseThrow();
     }
-
 
     public String updateOrderStatus(Long id, String status){
         Order order = orderRepo.findById(id).orElseThrow();
