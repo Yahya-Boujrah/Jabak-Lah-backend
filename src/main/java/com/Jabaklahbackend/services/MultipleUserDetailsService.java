@@ -48,6 +48,7 @@ public class MultipleUserDetailsService implements UserDetailsService {
             case "LIVREUR" :
                 System.out.println("livreur here");
                 user= deliveryManRepo.findByUsername(arr[0]).orElseThrow( () -> new UsernameNotFoundException("User not found"));
+                System.out.println("livreur found");
                 user.setUsername(username);
                 break;
 
