@@ -18,6 +18,7 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
 
     Optional<List<Product>> findByNameContaining(String name);
 
+
     @Query(value = "SELECT * FROM product WHERE id IN :ids", nativeQuery = true)
     public Optional<List<Product>> findByDebtIds(@Param(value = "ids") List<Long> ids);
 }
