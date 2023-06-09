@@ -7,6 +7,7 @@ import com.Jabaklahbackend.payloads.AuthenticationResponse;
 import com.Jabaklahbackend.repositories.AdminRepo;
 import com.Jabaklahbackend.repositories.AgentRepo;
 import com.Jabaklahbackend.repositories.ClientRepo;
+import com.Jabaklahbackend.repositories.DeliveryManRepo;
 import com.Jabaklahbackend.security.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +28,10 @@ public class AuthenticationService {
     AgentRepo agentRepo;
     @Autowired
     ClientRepo clientRepo;
+
+    @Autowired
+    DeliveryManRepo deliveryManRepo;
+
     @Autowired
     JwtService jwtService;
     @Autowired
@@ -53,6 +58,8 @@ public class AuthenticationService {
             case "CLIENT" :
                 user = clientRepo.findByPhone(request.getUsername().split(":")[0]).orElseThrow();
                 break;
+            case "DG" :
+                user = deliveryManRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();
             default:
                 throw new UsernameNotFoundException("User not found");
         }

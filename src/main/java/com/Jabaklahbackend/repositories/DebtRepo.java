@@ -14,4 +14,6 @@ public interface DebtRepo extends JpaRepository<Debt, Long> {
 
     public Optional<List<Debt>> findByArticle(Article article);
     public Optional<List<Debt>> findByBill(Bill bill);
+
+    public Optional<List<Debt>> findByOrderId(Long id);
 }

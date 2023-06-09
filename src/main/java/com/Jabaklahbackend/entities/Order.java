@@ -39,14 +39,19 @@ public class Order {
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
-
     @JsonIgnore
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Debt> debts;
+
+    @ManyToOne
+    @JoinColumn(name = "delivery-man-id")
+    private DeliveryMan deliveryman;
 
     public void setDebts(List<Debt> debts) {
         debts.forEach(debt -> debt.setOrder(this));
         this.debts = debts;
     }
+
+
 
 }
