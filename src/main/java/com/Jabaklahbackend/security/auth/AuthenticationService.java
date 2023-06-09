@@ -59,6 +59,7 @@ public class AuthenticationService {
                 break;
             case "LIVREUR" :
                 user = deliveryManRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();
+                break;
             default:
                 throw new UsernameNotFoundException("User not found");
         }
