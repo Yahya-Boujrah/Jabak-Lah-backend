@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/delivery")
@@ -40,13 +41,16 @@ public class DeliveryController {
                         .build()
         );
     }
-    @PutMapping("/updateOrder/{orderId}")
-    public ResponseEntity<Response> updateOrder(@PathVariable Long orderId, @RequestBody Long dgId){
+    @PutMapping("/updateOrder/{ids}")
+    public ResponseEntity<Response> updateOrder(@PathVariable("ids") List<Long> ids){
+        System.out.println("in controller liv ");
+        System.out.println(ids.get(0));
+        System.out.println(ids.get(1));
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .message("affected" + deliveryService.affectDG2Order(dgId, orderId))
+                        .message("affected" + deliveryService.affectDG2Order( ids.get(0), ids.get(1)) )
                         .build()
         );
     }
