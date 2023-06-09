@@ -144,12 +144,12 @@ public String confirmBillPayment(String verificationCode){
                 );
                 List<Debt> productDebts = mappedDebts.stream().filter(debt -> debt.getType() == DebtType.PRODUCT).collect(Collectors.toList());
                 BigDecimal total = new BigDecimal(0);
-                List<Long> debtIds = new ArrayList<>();
+                List<Long> productIds = new ArrayList<>();
                 for(Debt debt : productDebts){
                     total = total.add(debt.getAmount());
-                    debtIds.add(debt.getId());
+                    productIds.add(debt.getProduct().getId());
                 }
-                List<Product> products = productRepo.findByDebtIds(debtIds).orElseThrow();
+                List<Product> products = productRepo.findByDebtIds(productIds).orElseThrow();
 
                 products.stream().forEach(product -> {
                     int unit = product.getUnitsInStock();
