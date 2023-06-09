@@ -41,13 +41,13 @@ public class DeliveryController {
         );
     }
     @PutMapping("/updateOrder/{orderId}")
-    public ResponseEntity<Response> updateOrder(@PathVariable Long orderId, @RequestBody Long dgId){
+    public ResponseEntity<Response> updateOrder(@PathVariable Long orderId, @RequestBody String dgId){
         System.out.println("in controller liv");
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .message("affected" + deliveryService.affectDG2Order(dgId, orderId))
+                        .message("affected" + deliveryService.affectDG2Order( dgId, Long.valueOf(orderId) ) );
                         .build()
         );
     }
