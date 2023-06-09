@@ -47,7 +47,7 @@ public class DeliveryController {
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
                         .status(HttpStatus.OK)
-                        .message("affected" + deliveryService.affectDG2Order( ids.get(0), ids.get(1) ) );
+                        .message("affected" + deliveryService.affectDG2Order( ids.get(0), ids.get(1)) )
                         .build()
         );
     }
