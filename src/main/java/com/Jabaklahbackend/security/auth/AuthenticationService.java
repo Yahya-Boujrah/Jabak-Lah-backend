@@ -38,7 +38,7 @@ public class AuthenticationService {
     AuthenticationManager authenticationManager;
 
     public AuthenticationResponse authenticate(AdminAuthRequest request) {
-        
+
         System.out.println(request.getUsername() + " " + request.getPassword());
         
         authenticationManager.authenticate(

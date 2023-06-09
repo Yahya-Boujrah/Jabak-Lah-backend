@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DeliveryService {
 
-    private static DebtRepo debtRepo;
+    private final DebtRepo debtRepo;
 
-    private static ProductRepo productRepo;
+    private final ProductRepo productRepo;
 
-    private static OrderRepo orderRepo;
+    private final OrderRepo orderRepo;
 
-    private static DeliveryManRepo deliveryManRepo;
+    private final DeliveryManRepo deliveryManRepo;
 
     public List<Order> getOrdersForDG(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
