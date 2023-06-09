@@ -33,10 +33,9 @@ public class DeliveryService {
         Order order = orderRepo.findById(orderId).orElseThrow();
 
         order.setDeliveryman(dg);
-        dg.setOrders(List.of(order));
-
-
-        deliveryManRepo.save(dg);
+//        //dg.setOrders(List.of(order));
+//
+//        deliveryManRepo.save(dg);
         orderRepo.save(order);
 
         return Boolean.TRUE;

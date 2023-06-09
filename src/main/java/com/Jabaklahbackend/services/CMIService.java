@@ -160,6 +160,7 @@ public String confirmBillPayment(String verificationCode){
                 Order order = new Order();
                 order.setDebts(productDebts);
                 order.setTotalPrice(total);
+                order.setStatus(OrderStatus.ORDER_ON_PROCESS);
                 order.setOrderTrackingNumber(orderService.generateOrderTrackingNumber());
                 order.setClient(client);
                 orderRepo.save(order);
