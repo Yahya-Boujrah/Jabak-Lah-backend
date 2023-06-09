@@ -58,7 +58,7 @@ public class AuthenticationService {
             case "CLIENT" :
                 user = clientRepo.findByPhone(request.getUsername().split(":")[0]).orElseThrow();
                 break;
-            case "DG" :
+            case "LIVREUR" :
                 user = deliveryManRepo.findByUsername(request.getUsername().split(":")[0]).orElseThrow();
             default:
                 throw new UsernameNotFoundException("User not found");

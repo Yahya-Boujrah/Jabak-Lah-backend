@@ -36,7 +36,9 @@ public enum Role {
 
                     CLIENT_WRITE
             )
-    );
+    ),
+
+    LIVREUR(Collections.emptySet());
 
     @Getter
     private final Set<Privilege> privileges;
