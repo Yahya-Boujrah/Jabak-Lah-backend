@@ -42,6 +42,7 @@ public class DeliveryController {
     }
     @PutMapping("/updateOrder/{orderId}")
     public ResponseEntity<Response> updateOrder(@PathVariable Long orderId, @RequestBody Long dgId){
+        System.out.println("in controller liv");
         return ResponseEntity.ok(
                 Response.builder()
                         .statusCode(HttpStatus.OK.value())
