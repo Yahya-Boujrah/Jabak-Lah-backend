@@ -40,7 +40,7 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AdminAuthRequest request) {
 
         System.out.println(request.getUsername() + " " + request.getPassword());
-
+        
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
